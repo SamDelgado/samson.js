@@ -4,7 +4,9 @@
   "author": "Sam Delgado <sam@samdelgado.com>",
   "version": "0.0.3",
   "main": "lib/index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha"
+  },
   "keywords": [
     "samson",
     "samson.js",
@@ -36,8 +38,10 @@
     "jss-extend": "0.1.6"
   },
   "devDependencies": {
+    "mocha": "2.2.5",
+    "expect.js": "0.3.1",
     "browserify": "~7.0.0",
-    "gulp": "*",
+    "gulp": "~3.9.0",
     "gulp-uglify": "~1.0.2",
     "gulp-rename": "~1.2.0",
     "vinyl-source-stream": "~1.0.0"
