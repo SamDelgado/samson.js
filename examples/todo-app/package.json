@@ -1,0 +1,29 @@
+{
+  "name": "samson-cordova-todo-app",
+  "author": "Sam Delgado",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "quojs": "3.0.8",
+    "async-lite": "1.0.1",
+    "lodash.isequal": "3.0.4",
+    "dom-delegate": "2.0.3",
+    "jss": "1.0.8",
+    "jss-vendor-prefixer": "0.2.1",
+    "jss-extend": "0.1.6"
+  },
+  "devDependencies": {
+    "aliasify": "~1.7.2",
+    "jadeify": "~4.3.0",
+    "browserify": "~7.0.0",
+    "gulp": "*",
+    "gulp-livereload": "^3.8.0",
+    "gulp-uglify": "~1.0.2",
+    "run-sequence": "~1.1.0",
+    "vinyl-source-stream": "~1.0.0",
+    "ecstatic": "~0.8.0",
+    "ip": "~0.3.2",
+    "gulp-shell": "~0.4.1"
+  }
+}

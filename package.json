@@ -1,0 +1,52 @@
+{
+  "name": "samson.js",
+  "description": "A performant and easy to learn mobile app framework that will allow you to rapidly build native-like apps that target modern devices (iOS 7+ / Android 4+)",
+  "author": "Sam Delgado <sam@samdelgado.com>",
+  "version": "0.0.3",
+  "main": "lib/index.js",
+  "scripts": {},
+  "keywords": [
+    "samson",
+    "samson.js",
+    "cordova",
+    "phonegap",
+    "mobile",
+    "app",
+    "framework",
+    "client",
+    "view",
+    "router",
+    "transitions"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SamDelgado/samson.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SamDelgado/samson.js/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "quojs": "3.0.8",
+    "async-lite": "1.0.1",
+    "lodash.isequal": "3.0.4",
+    "dom-delegate": "2.0.3",
+    "jss": "1.0.8",
+    "jss-vendor-prefixer": "0.2.1",
+    "jss-extend": "0.1.6"
+  },
+  "devDependencies": {
+    "browserify": "~7.0.0",
+    "gulp": "*",
+    "gulp-uglify": "~1.0.2",
+    "gulp-rename": "~1.2.0",
+    "vinyl-source-stream": "~1.0.0"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "samson.js",
+    "samson-min.js",
+    "lib/"
+  ]
+}

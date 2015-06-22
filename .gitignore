@@ -1,0 +1,23 @@
+# Custom Files #
+################
+*.sublime-project
+npm-debug.log
+node_modules
+bower_components
+
+# Cordova Files #
+#################
+
+# iOS
+*.xcuserdatad
+*.xcworkspace
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
