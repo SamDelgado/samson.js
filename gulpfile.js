@@ -27,7 +27,7 @@ gulp.task('browserify', function () {
 
 });
 
-// uglify our bundles javascript for production
+// uglify bundles javascript for production
 var uglify = require('gulp-uglify');
 
 gulp.task('uglify', ['browserify'], function () {
@@ -49,4 +49,4 @@ gulp.task('uglify', ['browserify'], function () {
 });
 
 /************** Gulp Tasks *****************/
-gulp.task('build', ['browserify', 'uglify']);
+gulp.task('default', ['browserify', 'uglify']);
