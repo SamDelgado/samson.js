@@ -43,3 +43,11 @@ App.configure(options, function() {
   * A CSS Reset for Cordova/Phonegap apps (from: https://github.com/ivangabriele/Cordova-CSS-Reset)
   * An extensible page router with default transition animations
   * "Pages" and "Components" that automatically handle their whole lifecycle. No more "zombie" views or event listeners
+
+## To Do
+
+  * Use JSDocs for documentation of the framework
+  * Complete Cordova ToDo App example
+  * Add Tests
+  * Go into detail about why Samson was created and how best to use it
+  * Refactor any confusing code
