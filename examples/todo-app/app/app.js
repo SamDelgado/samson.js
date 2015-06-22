@@ -62,7 +62,7 @@ App.configure(options, function() {
   // The Samson App is now configured and ready to use
   Log("Samson app has been initialized");
 
-  var startApp = require('./init');
+  var startApp = require('common/startApp');
 
   // if we detect cordova then wait for the deviceready event
   if (typeof window.cordova === 'object') {

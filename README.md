@@ -11,6 +11,7 @@ $ npm install samson.js
 ```js
 var Samson = require('samson.js');
 var App = Samson.createApp();
+var options = {};
 
 App.configure(options, function() {
 
@@ -21,14 +22,14 @@ App.configure(options, function() {
 ```
 ## When Should You Use It?
 
-  * You need a framework that solves the hardest structural problems and then gets out of your way
+  * You need a framework that solves the hardest SPA (single page app) structural problems and then gets out of your way
   * You need robust page routing and animated transitions that just work
   * You want to use the most popular mobile interface elements like headers, tabs, or side menus
-  * You want get started with Cordova/Phonegap development but just don't know where to start (A full cordova example is provided in the examples folder)
+  * You want to get started with Cordova/Phonegap development but just don't know where to start (A full Cordova ToDo App example is provided in the examples folder)
   * You want to be told exactly how to structure your project files and folders so that you can just start writing code
   * You would love to a have a premade build script that automatically packages your app for you
   * You want to be able to quickly and easily add new features and components to your app
-  * You love Javascript. So much so that you would write your CSS in JS/JSON files if you could (you can)
+  * You love Javascript. So much so that you would write your CSS in JS/JSON files if you could (with Samson.js you can)
 
 ## When Shouldn't You Use It?
 
