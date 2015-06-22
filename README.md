@@ -1,5 +1,8 @@
 # Samson.js
 
+[![Build Status via Travis CI](https://travis-ci.org/SamDelgado/samson.js.svg?branch=master)](https://travis-ci.org/SamDelgado/samson.js)
+[![NPM version](http://img.shields.io/npm/v/samson.js.svg)](https://www.npmjs.org/package/samson.js)
+
 A performant and easy to learn mobile app framework that will allow you to rapidly build native-like apps that target modern devices (iOS 7+ / Android 4+). Used with Browserify, Samson is a great foundation for your next Cordova/Phonegap app. A specific project structure is recommended for maximum productivity. Full app examples can be found in the examples folder.
 
 ## Installation and Usage
