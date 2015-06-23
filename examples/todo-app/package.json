@@ -5,7 +5,6 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "quojs": "3.0.8",
     "async-lite": "1.0.3",
     "lodash.isequal": "3.0.4",
     "jss": "1.0.8",
