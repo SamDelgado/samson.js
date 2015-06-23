@@ -10,43 +10,36 @@ module.exports = {
     "#home-page": {
       position: "absolute",
       width: "100%",
-      height: "100%",
-      "background-color": Colors.lightGray,
+      height: "100%"
+    },
+
+    ".home-page-title": {
+      "width": "100%",
+      "font-size": "3rem",
       "text-align": "center",
-      color: "white",
-      "font-size": "4rem"
+      "color": Colors.turquoise
     }
 
   },
 
   domEvents : {
 
-    'touch' : function clickHomePage(event, target) {
-      this.customHandler();
+    'touch' : function(event, target) {
+      console.log("Home Page hit");
     }
 
   },
 
   appEvents : {
 
-    'topBox:clicked': function(data, event) {
-      console.log(data);
-    }
-
   },
 
   extend : {
-
-    customHandler: function() {
-      console.log("Custom handler called. Home Page hit");
-    }
 
   },
 
   components : {
 
-    topBox : require('./topBox'),
-    blueBox : require('./blueBox')
   },
 
   // must synchronously return an object that will set the initial state of the component. this object will be passed to the templating engine
@@ -62,6 +55,8 @@ module.exports = {
 
   // this function runs before the Page is rendered
   beforeRender : function(callback) {
+
+    App.Data.HeaderTitle = "Home";
 
     callback();
 

@@ -5,6 +5,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
+    "samson.js": "0.1.0",
     "async-lite": "1.0.3",
     "lodash.isequal": "3.0.4",
     "jss": "1.0.8",

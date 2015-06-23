@@ -26,13 +26,13 @@ gulp.task('browserify', function () {
   // require aliases
   var aliasify_options = {
     aliases: {
+      "samson.js": "../../lib",
       "common": "./app/common",
       "modules": "./app/common/modules",
       "utils": "./app/common/utils",
       "settings": "./app/common/settings",
       "pages": "./app/pages",
-      "components": "./app/components",
-      "samson.js": "../../lib"
+      "components": "./app/components"
     },
     verbose: false
   };

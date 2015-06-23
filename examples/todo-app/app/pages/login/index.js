@@ -11,37 +11,36 @@ module.exports = {
     "#login-page": {
       position: "absolute",
       width: "100%",
-      height: "100%",
-      "background-color": Colors.lightGray,
+      height: "100%"
+    },
+
+    ".login-page-title": {
+      "width": "100%",
+      "font-size": "3rem",
       "text-align": "center",
-      color: "white",
-      "font-size": "4rem"
+      "color": Colors.blue
     }
 
   },
 
   extend: {
-    fullscreen: true,
+    fullscreen: false,
   },
 
-  events : {
+  domEvents : {
+
+    'touch' : function(event, target) {
+      console.log("Login Page hit");
+    }
 
   },
 
   appEvents : {
-    'something' : function() {
-      App.router.navigate("home");
-    }
   },
 
   setComponents : function() {
 
     var components = {};
-    components.redBox = require('./redBox');
-
-    if (App.models.show_top_box) {
-      components.topBox = require('./topBox');
-    }
 
     return components;
 
@@ -60,6 +59,8 @@ module.exports = {
 
   // this function runs before the Page is rendered
   beforeRender : function(callback) {
+
+    App.Data.HeaderTitle = "Login";
 
     callback();
 

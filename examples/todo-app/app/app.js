@@ -16,14 +16,22 @@ var options = {
 
   style : require('common/styles'),
 
+  fonts : require('common/fonts'),
+
+  //setComponents : require('common/setComponents'), // optional function that returns a component object - use if the app components are dynamic based on screensize, device OS, etc
+
   components : require('components'),
 
   pages: require("pages"),
 
+  data: {
+    HeaderTitle: "Home"
+  },
+
   // any custom methods/properties you want attached directly to the app object. the context will be the app object
   custom: {
-    models : {},
-    collections : {}
+    Models : {},
+    Collections : {}
   },
 
   router : {

@@ -19,7 +19,7 @@ module.exports = function() {
 
       App.emit("app:initialized");
 
-      App.router.navigate("home", "bottom");
+      App.Router.navigate("home", "fade");
 
     }
 

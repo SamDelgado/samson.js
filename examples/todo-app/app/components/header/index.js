@@ -4,7 +4,7 @@ function setHeaderHeight() {
   return (Math.floor(Math.random()*(max-min+1) + min)) + "px";
 }
 
-var header_height = setHeaderHeight();
+var header_height = "60px";// setHeaderHeight();
 
 module.exports = {
 
@@ -35,12 +35,25 @@ module.exports = {
       "position": "absolute",
       "left": "50%",
       "top": "50%",
-      "height": "60px",
-      "line-height": "60px",
-      "width": "50%",
+      "height": "40px",
+      "line-height": "40px",
+      "width": "60%",
       "Transform": "translate(-50%,-50%)",
       "color": "#ffffff",
       "font-size": "3rem",
+      "text-align": "center",
+      "vertical-align": "middle"
+    },
+
+    "#samson_header_button": {
+      "position": "absolute",
+      "left": "10px",
+      "top": "10px",
+      "height": "40px",
+      "line-height": "40px",
+      "width": "40px",
+      "color": "#ffffff",
+      "font-size": "4rem",
       "text-align": "center",
       "vertical-align": "middle"
     }
@@ -51,6 +64,10 @@ module.exports = {
 
     'touch' : function(event) {
       console.log("Header Hit");
+    },
+
+    'touch #samson_header_button': function() {
+      App.emit('header-button:hit');
     }
 
   },
@@ -58,7 +75,7 @@ module.exports = {
   appEvents: {
 
     'app:initialized': function() {
-      App.emit('header:show');
+      this.handleHeader("add");
     },
 
     'header:show': function() {
@@ -82,7 +99,7 @@ module.exports = {
     beforeAnimate: function(data, callback) {
 
       // if the page is fullscreen, then hide the header and stretch the page to the top of the screen
-      if (App.router.pageCache[data.nextPage].fullscreen) {
+      if (App.Router.pageCache[data.nextPage].fullscreen) {
         App.DOM[data.inactivePageElement].style.top = "";
         this.handleHeader("remove");
       } else {
@@ -92,8 +109,9 @@ module.exports = {
 
       callback();
     },
+
     duringAnimate: function(data) { // no callback
-      this.setState({title: data.nextPage});
+      this.setState({title: App.Data.HeaderTitle});
     }
   },
 
@@ -111,12 +129,19 @@ module.exports = {
   // this function runs before the Page is rendered
   beforeRender : function(callback) {
 
+    if (!App.Data.HeaderTitle) {
+      App.Data.HeaderTitle = "Home";
+    }
+
     callback();
 
   },
 
   // this function runs after the Page is rendered
   afterRender : function(callback) {
+
+    // cache the header element
+    App.DOM.samson_header = this.element;
 
     callback();
 
@@ -125,8 +150,8 @@ module.exports = {
   // this function runs right before the Page is destroyed
   beforeRemove : function(callback) {
 
-    // cache the header element
-    App.DOM.samson_header = this.element;
+    // delete the header element from the chache
+    delete App.DOM.samson_header;
 
     callback();
 
