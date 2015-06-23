@@ -1,4 +1,4 @@
-var async = require('../async-lite.js');
+var Samson = require('../lib/index.js');
 var expect = require('expect.js');
 
 describe('samson', function() {
