@@ -9,6 +9,7 @@
  * Module dependencies
  */
 
+var Utils = require('./utils');
 var $ = require('./modules/quo.js');
 var async = require('async-lite');
 
@@ -21,6 +22,9 @@ jss.use(jssExtend);
 
 var css_reset = require('./styles/reset');
 var base_styles = require('./styles/base_styles');
+
+// reserved properties for the Samson.App object. all properties starting with _ are also reserved
+var reserved = ["$", "DOM", "styleSheet", "baseStyle", "style", "components", "setComponents", "Router", "Pages", "on", "emit", "off"];
 
 // create the Samson object that will be exported
 module.exports = Samson = {};
@@ -47,10 +51,11 @@ Samson.createComponent = function(options, add_events) {
   return component;
 };
 
-// Samson.DOM will cache references to any Samson created DOM elements like #samson-app and #samson-pages
+// Samson.DOM will cache references to any Samson created DOM elements like #samson-app
 Samson.DOM = {};
 
-Samson.App; // the instantiated app will be attached to Samson.App for quick access
+// the instantiated app will be attached to Samson.App for quick access
+Samson.App;
 
 // only one Samson App can exist at a time, so if one has already been created, simply return it
 Samson.createApp = function() {
@@ -65,9 +70,6 @@ Samson.createApp = function() {
 };
 
 // the SamsonApp class
-
-var reserved = ["DOM", "styleSheet", "baseStyle", "style", "components", "router", "router_options", "pages", "on", "emit", "off"];
-
 function SamsonApp() {
   this._isConfigured = false;
 }
@@ -92,21 +94,22 @@ SamsonApp.prototype.configure = function(options, callback) {
     this.style = jss.createStyleSheet(this.styleSheet, {named: false});
     this.style.attach();
 
+    // add any fonts to the stylesheet
+    this.fonts = {};
+    var font;
+    for (font in options.fonts) {
+      this.fonts[font] = jss.createStyleSheet(options.fonts[font], {named: false}).attach();
+    }
+
+    // setup the app's Data object
+    this.Data = options.Data || options.data || {};
+
     // setup the app's pages
-    this.pages = options.pages || {};
+    this.Pages = options.Pages || options.pages || {};
 
     // setup the app's base components
     this.setComponents = options.setComponents || function() { return (options.components || {}); };
     this.components = this.setComponents();
-
-    // add any unreserved properties passed into the custom/extend object
-    var custom = options.extend || options.custom || {};
-    var key;
-    for (key in custom) {
-      if (reserved.indexOf(key) === -1) {
-        this[key] = custom[key];
-      }
-    }
 
     /* First setup the required DOM elements and components of a Samson App */
 
@@ -114,32 +117,6 @@ SamsonApp.prototype.configure = function(options, callback) {
     // #samson_app, #samson_pages, #samson_page_1, #samson_page_2, #samson_faded_overlay, #samson_transparent_overlay
     Samson.DOM.samson_app = document.createElement("div");
     Samson.DOM.samson_app.id = "samson_app";
-
-    Samson.DOM.samson_faded_overlay = document.createElement("div");
-    Samson.DOM.samson_faded_overlay.id = "samson_faded_overlay";
-    Samson.DOM.samson_app.appendChild(Samson.DOM.samson_faded_overlay);
-
-    // Respond to show/hide events for the samson_faded_overlay element
-    Samson.App.on('faded-overlay:show', function() {
-      Samson.DOM.samson_faded_overlay.classList.add("show");
-    });
-
-    Samson.App.on('faded-overlay:hide', function() {
-      Samson.DOM.samson_faded_overlay.classList.remove("show");
-    });
-
-    Samson.DOM.samson_transparent_overlay = document.createElement("div");
-    Samson.DOM.samson_transparent_overlay.id = "samson_transparent_overlay";
-    Samson.DOM.samson_app.appendChild(Samson.DOM.samson_transparent_overlay);
-
-    // Respond to show/hide events for the samson_transparent_overlay element
-    Samson.App.on('transparent-overlay:show', function() {
-      Samson.DOM.samson_transparent_overlay.classList.add("show");
-    });
-
-    Samson.App.on('transparent-overlay:hide', function() {
-      Samson.DOM.samson_transparent_overlay.classList.remove("show");
-    });
 
     Samson.DOM.samson_pages = document.createElement("div");
     Samson.DOM.samson_pages.id = "samson_pages";
@@ -159,7 +136,11 @@ SamsonApp.prototype.configure = function(options, callback) {
     document.body.appendChild(Samson.DOM.samson_app); // add the base divs to the body
 
     // setup the app's router after loading any extra components
-    this.router = Samson.createRouter(options.router || {});
+    this.Router = Samson.createRouter(options.Router || options.router || {});
+
+    // add any unreserved properties passed into the custom/extend object
+    var custom = options.extend || options.custom || {};
+    Utils.extend(this, custom, reserved);
 
     // Load any other components
     var keys = Object.keys(self.components);
@@ -187,12 +168,13 @@ SamsonApp.prototype.configure = function(options, callback) {
 
 };
 
-},{"./component":2,"./events":3,"./modules/quo.js":4,"./page":5,"./router":7,"./styles/base_styles":9,"./styles/reset":10,"async-lite":12,"jss":20,"jss-extend":13,"jss-vendor-prefixer":14}],2:[function(require,module,exports){
+},{"./component":2,"./events":3,"./modules/quo.js":4,"./page":5,"./router":7,"./styles/base_styles":9,"./styles/reset":10,"./utils":11,"async-lite":12,"jss":20,"jss-extend":13,"jss-vendor-prefixer":14}],2:[function(require,module,exports){
 // Samson.Component constructor function
 // Used to simplify component rendering and transitions in single page apps
 
 var Samson = require('./index');
 var Shared = require('./shared');
+var Utils = require('./utils');
 var jss = require('jss');
 
 /* options can include:
@@ -238,7 +220,6 @@ function SamsonComponent(options) {
   // set the component's render function that will output an html string
   // if no render function was passed in, we check for a template function
   this._template = options.render || options.template;
-  if (!this._template) throw new Error("Your component " + this.el + " must have a render or template function that outputs an HTML string");
 
   // set the beforeRender function if one is specified
   this.beforeRender = options.beforeRender || Shared.justCallback;
@@ -250,21 +231,13 @@ function SamsonComponent(options) {
   this.beforeRemove = options.beforeRemove || Shared.justCallback;
 
   // add any router-related tasks
-  this._uuid = this.el + "-" + Date.now();
-  this._router = options.router || {};
-  var task;
-  for (task in this._router) {
-    Samson.App.router[task][this._uuid] = this._router[task].bind(this);
-  }
+  this._uuid = this.el + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
+  this._router = options.Router || options.router || {};
+  Shared.addRouterTasks(this);
 
   // add any unreserved properties passed into the custom or extend object
   var custom = options.extend || options.custom || {};
-  var prop;
-  for (prop in custom) {
-    if (Shared.reserved.indexOf(prop) === -1) {
-      this[prop] = custom[prop];
-    }
-  }
+  Utils.extend(this, custom, Shared.reserved);
 
 }
 
@@ -305,7 +278,9 @@ SamsonComponent.prototype._render = function(force_update, callback) {
           self.element = document.createElement("div");
           self.element.id = self.el;
 
-          self.element.innerHTML = self._template(self.state);
+          if (self._template) {
+            self.element.innerHTML = self._template(self.state);
+          }
 
           if (self.parent && self.parent.element) {
             self.parent.element.appendChild(self.element);
@@ -314,7 +289,9 @@ SamsonComponent.prototype._render = function(force_update, callback) {
           }
 
         } else {
-          self.element.innerHTML = self._template(self.state);
+          if (self._template) {
+            self.element.innerHTML = self._template(self.state);
+          }
         }
 
       }
@@ -340,7 +317,7 @@ SamsonComponent.prototype._render = function(force_update, callback) {
 
 module.exports = SamsonComponent;
 
-},{"./index":undefined,"./shared":8,"jss":20}],3:[function(require,module,exports){
+},{"./index":undefined,"./shared":8,"./utils":11,"jss":20}],3:[function(require,module,exports){
 
 module.exports = function AddEvents(target) {
 
@@ -384,6 +361,7 @@ module.exports = function AddEvents(target) {
 
 var Samson = require('./index');
 var Shared = require('./shared');
+var Utils = require('./utils');
 var $ = require('./modules/quo.js');
 var jss = require('jss');
 
@@ -456,21 +434,13 @@ function SamsonPage(options) {
   this.beforeRemove = options.beforeRemove || Shared.justCallback;
 
   // add any router-related tasks
-  this._uuid = this.name + "-" + Date.now();
-  this._router = options.router || {};
-  var task;
-  for (task in this._router) {
-    Samson.App.router[task][this._uuid] = this._router[task].bind(this);
-  }
+  this._uuid = this.name + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
+  this._router = options.Router || options.router || {};
+  Shared.addRouterTasks(this);
 
   // add any unreserved properties passed into the custom or extend object
   var custom = options.extend || options.custom || {};
-  var prop;
-  for (prop in custom) {
-    if (Shared.reserved.indexOf(prop) === -1) {
-      this[prop] = custom[prop];
-    }
-  }
+  Utils.extend(this, custom, Shared.reserved);
 
 }
 
@@ -540,7 +510,7 @@ SamsonPage.prototype._render = function(force_update, page_container, callback) 
 
 module.exports = SamsonPage;
 
-},{"./index":undefined,"./modules/quo.js":4,"./shared":8,"jss":20}],6:[function(require,module,exports){
+},{"./index":undefined,"./modules/quo.js":4,"./shared":8,"./utils":11,"jss":20}],6:[function(require,module,exports){
 
 var animationAmount = "100%";
 var animationDuration = "0.6s";
@@ -818,9 +788,6 @@ SamsonRouter.prototype._duringAnimate = function() {
 
 SamsonRouter.prototype.updateHistory = function(kind, message) {
 
-  // deactivate the #block-content div so things can be touched again
-  // if (App.DOM.contentOverlay) { App.DOM.contentOverlay.classList.remove("block-content"); }
-
   var self = this;
 
   var history_object = {};
@@ -834,10 +801,10 @@ SamsonRouter.prototype.updateHistory = function(kind, message) {
     this.history.push(history_object);
 
     // check if the currentPage is safe to go back to from anywhere
-    var back_safe = this.currentPage ? Samson.App.pages[this.currentPage].backSafe : false;
+    var back_safe = this.currentPage ? Samson.App.Pages[this.currentPage].backSafe : false;
 
     // if the currentPage is backSafe, then set it as the previousPage, otherwise set the configured previousPage
-    this.previousPage = back_safe ? this.currentPage : Samson.App.pages[this.nextPage].previousPage;
+    this.previousPage = back_safe ? this.currentPage : Samson.App.Pages[this.nextPage].previousPage;
 
     // set our currentPage as the page we are going to
     this.currentPage = this.nextPage;
@@ -853,7 +820,7 @@ SamsonRouter.prototype.updateHistory = function(kind, message) {
     this.currentPage = this.previousPage;
 
     // we are going back, so set the previousPage to the current Page's previousPage
-    this.previousPage = Samson.App.pages[this.currentPage].previousPage;
+    this.previousPage = Samson.App.Pages[this.currentPage].previousPage;
 
   } else if (kind === "failed") {
     console.log("Router event failed because: " + message);
@@ -874,6 +841,7 @@ SamsonRouter.prototype.updateHistory = function(kind, message) {
 
     if (queue_event.kind === "navigate") {
 
+      // added a 20ms delay due to some weird behavior with css animations not working without it
       setTimeout(function() {
         self.isBusy = false;
         self.navigate(queue_event.next_page, queue_event.animation, queue_event.callback);
@@ -952,40 +920,40 @@ SamsonRouter.prototype.animate = function(next_page, animation, callback) {
 
   var self = this;
 
-  this._doFirst("beforeAnimate", function(err) {
+  this.pagesAnimating = true;
 
-    self.pagesAnimating = true; // set pagesAnimating to true
+  if (animation === "update") {
 
-    // activate the #samson_transparent_overlay so nothing can be touched until the page finished
-    Samson.DOM.samson_transparent_overlay.classList.add("show");
+    this.pageCache[next_page]._render(true, null, function() {
 
-    if (animation === "update") {
-
-      self.pageCache[next_page]._render(true, null, function() {
+      self._doFirst("beforeAnimate", function(err) {
         if (callback) callback();
       });
 
-    } else {
+    });
 
-      // determine the type of animation that will be used
-      var animation_data = self.getAnimationData(animation);
+  } else {
 
-      // render the new page off screen
-      self.pageCache[next_page]._render(false, Samson.DOM[self.inactivePageElement], function() {
+    // determine the type of animation that will be used
+    var animation_data = this.getAnimationData(animation);
 
+    // render the new page off screen
+    this.pageCache[next_page]._render(false, Samson.DOM[this.inactivePageElement], function() {
+
+      self._doFirst("beforeAnimate", function(err) {
+
+        // run the animation now that the new page is fully rendered offscreen
         self.doAnimation(animation_data, function () {
 
-          // remove the #samson-transparent-overlay so that touch events work again
-          Samson.DOM.samson_transparent_overlay.classList.remove("show");
-
           if (callback) callback();
+
         });
 
       });
 
-    }
+    });
 
-  });
+  }
 
 };
 
@@ -1022,7 +990,7 @@ SamsonRouter.prototype.navigate = function(next_page, animation, callback) {
     this._doFirst("beforeNavigate", function(err) {
 
       // make sure the page exists before trying to navigate
-      if (!Samson.App.pages[next_page] && !err) {
+      if (!Samson.App.Pages[next_page] && !err) {
         err = "That page does not exist";
       }
 
@@ -1032,7 +1000,7 @@ SamsonRouter.prototype.navigate = function(next_page, animation, callback) {
         if (next_page === self.currentPage) {
           chosen_animation = "update";
         } else {
-          self.pageCache[next_page] = Samson.createPage(Samson.App.pages[next_page]);
+          self.pageCache[next_page] = Samson.createPage(Samson.App.Pages[next_page]);
         }
 
         // animate the page transition
@@ -1096,10 +1064,10 @@ SamsonRouter.prototype.back = function(callback) {
       if (!err) {
 
         // load the previousPage into the pageCache
-        self.pageCache[self.previousPage] = Samson.createPage(Samson.App.pages[self.previousPage]);
+        self.pageCache[self.previousPage] = Samson.createPage(Samson.App.Pages[self.previousPage]);
 
         // if the page wants a custom back animation then use it, otherwise use the default back animation
-        var backAnimation = Samson.App.pages[self.currentPage].backAnimation || self.backAnimation;
+        var backAnimation = Samson.App.Pages[self.currentPage].backAnimation || self.backAnimation;
 
         // animate the page transition
         self.animate(self.previousPage, backAnimation, function() {
@@ -1140,7 +1108,7 @@ var isEqual = require('lodash.isequal');
 var shared = {};
 
 // reserved properties for components and pages
-shared.reserved = ["name", "el", "element", "template", "subPageOf", "previousPage", "backAnimation", "style", "components", "events", "domEvents", "appEvents", "_loadEvents", "_loadedEvents", "setState", "setInitialState", "beforeRender", "afterRender", "beforeRemove", "_doFirst", "render", "_render", "_template", "_destroyEvents", "_loadComponents", "_componentsLoaded", "_stateChanged", "_initialStateSet", "parent", "_type", "_renderComponents", "_destroyComponents", "_remove", "on", "emit", "off"];
+shared.reserved = ["name", "el", "element", "template", "subPageOf", "previousPage", "backAnimation", "style", "components", "events", "domEvents", "appEvents", "state", "setState", "setInitialState", "beforeRender", "afterRender", "beforeRemove", "render", "parent", "on", "emit", "off"];
 
 // cached for performance
 shared.justCallback = function(cb) { cb(); };
@@ -1193,13 +1161,20 @@ shared.setState = function(new_state) { // new_state must be an object
   }
 };
 
-
 // run the named function before calling back
 shared._doFirst = function(name, callback) {
   this[name](function() {
     callback();
   });
 };
+
+// add any tasks that this page or component wants run at different events during router navigation
+shared.addRouterTasks = function(obj) {
+  var task;
+  for (task in obj._router) {
+    Samson.App.Router[task][obj._uuid] = obj._router[task].bind(obj);
+  }
+}
 
 shared._loadEvents = function(callback) {
 
@@ -1395,23 +1370,21 @@ shared._remove = function(callback) {
       self._destroyEvents(function() {
 
         // destroy the DOM element
-        if (self.element) {
-          if (self.element.parentNode) {
-            self.element.parentNode.removeChild(self.element);
-          }
-          delete self.element; // make sure the DOM node is removed from memory quickly
+        if (self.element && self.element.parentNode) {
+          self.element.parentNode.removeChild(self.element);
         }
+
+        // make sure the DOM node is removed from memory quickly
+        delete self.element;
 
         // remove any router related tasks
         var task;
         for (task in self._router) {
-          delete Samson.App.router[task][self._uuid];
+          delete Samson.App.Router[task][self._uuid];
         }
 
         // remove the event delegator if it exists
-        if (self.delegate) {
-          delete self.delegate;
-        }
+        delete self.delegate;
 
         // reset the page's state
         self.state = {};
@@ -1435,36 +1408,11 @@ module.exports = {
     "-webkit-box-sizing": "border-box",
     "box-sizing": "border-box"
   },
-  "::-webkit-scrollbar": {
-    "display": "none"
-  },
   "html, body, #samson_app": {
     "position": "relative",
     "width": "100%",
     "height": "100%",
     "background-color": "#FFF"
-  },
-  "#samson_faded_overlay, #samson_transparent_overlay": {
-    "background-color": "#000",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    "z-index": 10,
-    opacity: 0,
-    visibility: "hidden"
-  },
-  "#samson_faded_overlay": {
-    transition: "opacity 0.2s linear, visibility 0s linear 0.2s"
-  },
-  "#samson_faded_overlay.show": {
-    opacity: "0.6",
-    visibility: "visible",
-    "transition-delay": "0s"
-  },
-  "#samson_transparent_overlay.show": {
-    visibility: "visible"
   },
   "#samson_pages": {
     "position": "absolute",
@@ -1586,6 +1534,21 @@ module.exports = {
 // Utility functions
 
 var utils = {};
+
+// add any unreserved properties to the passed in object
+// any properties starting with _ are reserved
+function startsWith_(word) {
+  return (word.charAt(0) == "_") ? true : false;
+}
+
+utils.extend = function(obj, custom_props, reserved) {
+  var key;
+  for (key in custom_props) {
+    if (!startsWith_(key) && reserved.indexOf(key) === -1) {
+      obj[key] = custom_props[key];
+    }
+  }
+};
 
 function whichEventName(event_type) {
   var key;
