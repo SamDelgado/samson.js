@@ -30,9 +30,8 @@
   "license": "MIT",
   "dependencies": {
     "quojs": "3.0.8",
-    "async-lite": "1.0.1",
+    "async-lite": "1.0.3",
     "lodash.isequal": "3.0.4",
-    "dom-delegate": "2.0.3",
     "jss": "1.0.8",
     "jss-vendor-prefixer": "0.2.1",
     "jss-extend": "0.1.6"
