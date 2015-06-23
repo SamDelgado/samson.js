@@ -1,4 +1,4 @@
-var Samson = require('../lib/index.js');
+
 var expect = require('expect.js');
 
 describe('samson', function() {
