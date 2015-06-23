@@ -43,12 +43,16 @@ module.exports = {
 
     'touch .sidemenu_item': function(event) {
 
-      this.handleSideMenu();
+      this.element.classList.remove("open");
       App.emit("faded-overlay:hide");
 
       var page = event.target.getAttribute("data-page");
 
-      App.Router.navigate(page, "right");
+      // only navigate if they aren't on the page
+      if (page !== App.Router.currentPage) {
+        App.Router.navigate(page, "right");
+      }
+
     }
 
   },
