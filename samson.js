@@ -24,10 +24,12 @@ var css_reset = require('./styles/reset');
 var base_styles = require('./styles/base_styles');
 
 // reserved properties for the Samson.App object. all properties starting with _ are also reserved
-var reserved = ["$", "DOM", "styleSheet", "baseStyle", "style", "components", "setComponents", "Router", "Pages", "on", "emit", "off"];
+var reserved = ["$", "DOM", "Data", "styleSheet", "baseStyle", "style", "components", "setComponents", "Router", "Pages", "on", "emit", "off"];
 
 // create the Samson object that will be exported
 module.exports = Samson = {};
+
+Samson.VERSION = '0.1.3'; // keep in sync with package.json
 
 Samson.Events = require('./events'); // a mixin that will attach on, off, and emit methods to an object
 
@@ -244,6 +246,7 @@ function SamsonComponent(options) {
 // Have the SamsonComponent class inherit any shared methods from PageComponentBase
 SamsonComponent.prototype._type = "Component";
 SamsonComponent.prototype.setState = Shared.setState;
+SamsonComponent.prototype.resetState = Shared.resetState;
 SamsonComponent.prototype._doFirst = Shared._doFirst;
 SamsonComponent.prototype._loadEvents = Shared._loadEvents;
 SamsonComponent.prototype._destroyEvents = Shared._destroyEvents;
@@ -366,7 +369,7 @@ var $ = require('./modules/quo.js');
 var jss = require('jss');
 
 /* options can include:
-// name - name of the page
+// path - the router path of the page
 // subPageOf - an optional parent page that is the start of a specific category - ex: User Bio Page is subPageOf of Profile Page
 // previousPage - an optional previous page to make going back easier
 // backSafe - false by default. set to true if it is safe to go back to this page from any other page in the app
@@ -382,8 +385,8 @@ var jss = require('jss');
 
 function SamsonPage(options) {
 
-  // set the name of the page
-  this.name = options.name;
+  // set the path of the page
+  this.path = options.path;
 
   // jss styleSheet
   if (typeof options.style === "object") {
@@ -422,7 +425,7 @@ function SamsonPage(options) {
   // set the page's render function that will output an html string
   // if no render function was passed in, we check for a template function
   this._template = options.render || options.template;
-  if (!this._template) throw new Error("Your page " + this.name + " must have a render or template function that outputs an HTML string");
+  if (!this._template) throw new Error("Your page " + this.path + " must have a render or template function that outputs an HTML string");
 
   // set the beforeRender function if one is specified
   this.beforeRender = options.beforeRender || Shared.justCallback;
@@ -434,7 +437,7 @@ function SamsonPage(options) {
   this.beforeRemove = options.beforeRemove || Shared.justCallback;
 
   // add any router-related tasks
-  this._uuid = this.name + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
+  this._uuid = this.path + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
   this._router = options.Router || options.router || {};
   Shared.addRouterTasks(this);
 
@@ -447,6 +450,7 @@ function SamsonPage(options) {
 // Have the SamsonPage class inherit any shared methods
 SamsonPage.prototype._type = "Page";
 SamsonPage.prototype.setState = Shared.setState;
+SamsonPage.prototype.resetState = Shared.resetState;
 SamsonPage.prototype._doFirst = Shared._doFirst;
 SamsonPage.prototype._loadEvents = Shared._loadEvents;
 SamsonPage.prototype._destroyEvents = Shared._destroyEvents;
@@ -475,7 +479,7 @@ SamsonPage.prototype._render = function(force_update, page_container, callback) 
       // create the page element
       if (!self.element) {
         self.element = document.createElement("div");
-        self.element.id = self.name + "-page";
+        self.element.id = self.path + "-page";
         self.element.innerHTML = self._template(self.state);
         page_container.appendChild(self.element);
 
@@ -727,7 +731,9 @@ function SamsonRouter(options) {
 
   this.nextPage = false; // the name of the page we are transitioning to
 
-  this.isBusy = false; // set to true whenever the route is still handling an event
+  this.currentAnimation = false; // the name of the currently running animation
+
+  this.isBusy = false; // set to true whenever the router is still handling an event
 
   this.pagesAnimating = false; // set to true if a new page is being loaded
 
@@ -763,7 +769,8 @@ SamsonRouter.prototype.getPageData = function() {
     nextPage : this.nextPage,
     pagesAnimating : this.pagesAnimating,
     activePageElement : this.activePageElement,
-    inactivePageElement : this.inactivePageElement
+    inactivePageElement : this.inactivePageElement,
+    currentAnimation : this.currentAnimation
   };
 };
 
@@ -937,13 +944,30 @@ SamsonRouter.prototype.animate = function(next_page, animation, callback) {
     // determine the type of animation that will be used
     var animation_data = this.getAnimationData(animation);
 
+    // remove the focus from whatever element has it so the cursor doesn't make the page transition look sucky
+    var oldFocusElement = document.activeElement === document.body ? false : document.activeElement;
+    if (oldFocusElement) oldFocusElement.blur();
+
     // render the new page off screen
     this.pageCache[next_page]._render(false, Samson.DOM[this.inactivePageElement], function() {
+
+      // remove the focus from whatever element has it, and then restore the focus when the animation ends
+      var focusElement = document.activeElement === document.body ? false : document.activeElement;
+      if (focusElement) focusElement.blur();
 
       self._doFirst("beforeAnimate", function(err) {
 
         // run the animation now that the new page is fully rendered offscreen
         self.doAnimation(animation_data, function () {
+
+          if (focusElement) {
+            // refocus the element
+            focusElement.focus();
+            // reset the value so the cursor moves to the end of the text
+            var value = focusElement.value;
+            focusElement.value = "";
+            focusElement.value = value;
+          }
 
           if (callback) callback();
 
@@ -979,7 +1003,7 @@ SamsonRouter.prototype.navigate = function(next_page, animation, callback) {
 
     var chosen_animation = animation || this.navigateAnimation;
 
-    // if a page update is requested, but it isn't the current page, then we will simply navigate to it like normal
+    // if a page update is requested for a page we aren't currently on, then we will simply navigate to it like normal
     if (chosen_animation === "update" && next_page !== this.currentPage) {
       chosen_animation = this.navigateAnimation;
     }
@@ -1002,6 +1026,9 @@ SamsonRouter.prototype.navigate = function(next_page, animation, callback) {
         } else {
           self.pageCache[next_page] = Samson.createPage(Samson.App.Pages[next_page]);
         }
+
+        // make the current animation accessible in getPageData()
+        self.currentAnimation = chosen_animation;
 
         // animate the page transition
         self.animate(next_page, chosen_animation, function() {
@@ -1067,10 +1094,13 @@ SamsonRouter.prototype.back = function(callback) {
         self.pageCache[self.previousPage] = Samson.createPage(Samson.App.Pages[self.previousPage]);
 
         // if the page wants a custom back animation then use it, otherwise use the default back animation
-        var backAnimation = Samson.App.Pages[self.currentPage].backAnimation || self.backAnimation;
+        var back_animation = Samson.App.Pages[self.currentPage].backAnimation || self.backAnimation;
+
+        // make the current animation accessible in getPageData()
+        self.currentAnimation = back_animation;
 
         // animate the page transition
-        self.animate(self.previousPage, backAnimation, function() {
+        self.animate(self.previousPage, back_animation, function() {
 
           // run any necessary tasks after the page transition
           self._doFirst("afterAnimate", function(err) {
@@ -1108,7 +1138,7 @@ var isEqual = require('lodash.isequal');
 var shared = {};
 
 // reserved properties for components and pages
-shared.reserved = ["name", "el", "element", "template", "subPageOf", "previousPage", "backAnimation", "style", "components", "events", "domEvents", "appEvents", "state", "setState", "setInitialState", "beforeRender", "afterRender", "beforeRemove", "render", "parent", "on", "emit", "off"];
+shared.reserved = ["path", "el", "element", "template", "subPageOf", "previousPage", "backAnimation", "style", "components", "events", "domEvents", "appEvents", "state", "setState", "resetState", "setInitialState", "beforeRender", "afterRender", "beforeRemove", "render", "parent", "on", "emit", "off"];
 
 // cached for performance
 shared.justCallback = function(cb) { cb(); };
@@ -1161,6 +1191,11 @@ shared.setState = function(new_state) { // new_state must be an object
   }
 };
 
+shared.resetState = function() {
+  var new_state = this.setInitialState();
+  this.setState(new_state);
+};
+
 // run the named function before calling back
 shared._doFirst = function(name, callback) {
   this[name](function() {
@@ -1197,7 +1232,7 @@ shared._loadEvents = function(callback) {
       event.selector = event.selector || selector_element;
 
       event.handler = function fixedEventHandler(e) {
-        self.domEvents[key].call(self, e, this);
+        self.domEvents[key].call(self, e, e.currentTarget);
       };
 
       if (event.selector) {
