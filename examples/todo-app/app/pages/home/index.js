@@ -1,7 +1,7 @@
 
 module.exports = {
 
-  name: 'home',
+  path: 'home',
   subPageOf: false,
   previousPage: false,
   template: require("./template.jade"),
@@ -13,32 +13,20 @@ module.exports = {
       height: "100%"
     },
 
-    ".home-page-title": {
-      "width": "100%",
-      "font-size": "3rem",
-      "text-align": "center",
-      "color": Colors.turquoise
+    ".app-info": {
+      "width": "80%",
+      margin: "20px auto 20px auto",
+      "font-size": "1.6rem",
+      "line-height": 1.4
     }
 
   },
 
-  domEvents : {
+  domEvents : {},
 
-    'touch' : function(event, target) {
-      console.log("Home Page hit");
-    }
-
-  },
-
-  appEvents : {
-
-  },
+  appEvents : {},
 
   extend : {
-
-  },
-
-  components : {
 
   },
 
@@ -56,7 +44,7 @@ module.exports = {
   // this function runs before the Page is rendered
   beforeRender : function(callback) {
 
-    App.Data.HeaderTitle = "Home";
+    App.Data.Header.title = "ToDo App";
 
     callback();
 

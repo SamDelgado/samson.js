@@ -1,4 +1,6 @@
 
+var Samson = require('samson.js');
+
 module.exports = {
 
   el: 'samson_transparent_overlay',
@@ -24,36 +26,46 @@ module.exports = {
   domEvents: {
 
     'touch' : function(event) {
-      console.log("Tranparent Overlay Hit");
-      App.emit("transparent-overlay:hit");
+      Samson.App.emit("transparent-overlay:hit");
     }
 
   },
 
-  appEvents: {
+  appEvents: {},
 
-    'transparent-overlay:show': function() {
-      this.element.classList.add("show");
+  extend: {
+
+    isVisible: false,
+
+    hideTransparentOverlay : function() {
+      this.element.classList.remove("show");
+      this.isVisible = false;
     },
 
-    'transparent-overlay:hide': function() {
-      this.element.classList.remove("show");
+    showTransparentOverlay : function() {
+      this.element.classList.add("show");
+      this.isVisible = true;
+    },
+
+    toggleTransparentOverlay : function() {
+      if (this.isVisible) {
+        this.hideTransparentOverlay();
+      } else {
+        this.showTransparentOverlay();
+      }
     }
 
   },
-
-  extend: {},
 
   router: {
 
     beforeAnimate: function(data, callback) {
-
-      this.element.classList.add("show");
+      this.showTransparentOverlay();
       callback();
     },
 
     afterAnimate: function(data, callback) {
-      this.element.classList.remove("show");
+      this.hideTransparentOverlay();
       callback();
     }
 
@@ -63,7 +75,7 @@ module.exports = {
   afterRender : function(callback) {
 
     // cache the transparent overlay element
-    App.DOM.samson_transparent_overlay = this.element;
+    Samson.App.DOM.samson_transparent_overlay = this.element;
 
     callback();
 
@@ -73,7 +85,7 @@ module.exports = {
   beforeRemove : function(callback) {
 
     // delete the transparent overlay element from the cache
-    delete App.DOM.samson_transparent_overlay;
+    delete Samson.App.DOM.samson_transparent_overlay;
 
     callback();
 

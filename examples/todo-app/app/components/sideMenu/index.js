@@ -1,4 +1,6 @@
 
+var Samson = require('samson.js');
+
 module.exports = {
 
   el: 'samson_sidemenu',
@@ -8,49 +10,71 @@ module.exports = {
     "#samson_sidemenu": {
       "position": "absolute",
       "z-index": 11,
-      "left": "-240px",
+      "left": "-200px",
       "top": "60px",
       "bottom": "0",
-      "width" : "240px",
-      "background-color": Colors.gray,
+      "width" : "200px",
+      "background-color": "#666",
       "transition": "all 0.2s ease-in-out",
       "Transform": "translate3d(0,0,0)"
     },
 
     "#samson_sidemenu.open": {
-      "Transform": "translate3d(240px,0,0)"
+      "Transform": "translate3d(200px,0,0)"
     },
 
-    ".sidemenu_item": {
+    ".samson_sidemenu_item": {
       width: "100%",
-      padding: "5px 0 5px 0",
-      color: Colors.white,
-      "text-align": "center",
-      "font-size": "2rem"
+      padding: "10px 10px 10px 10px",
+      color: "#fff",
+      "text-align": "left",
+      "font-size": "2.2rem",
+      "border-bottom": "2px solid #bbb"
     },
 
-    ".sidemenu_item:active": {
-      "background-color": Colors.turquoise
+    ".samson_sidemenu_item.selected": {
+      "background-color": "#1abc9c"
+    },
+
+    ".samson_sidemenu_item:active": {
+      "background-color": "#fff",
+      color: "#000"
+    },
+
+    '.samson_sidemenu_item i': {
+      "margin-right": "15px"
     }
 
   },
 
   domEvents: {
 
-    'touch' : function(event) {
-      console.log("SideMenu Hit");
-    },
+    // handle any .samson_sidemenu_item being touched
+    'touch .samson_sidemenu_item': function(event) {
 
-    'touch .sidemenu_item': function(event) {
+      // make sure the router isn't already busy before accepting any events from the sidemenu
+      if (!Samson.App.Router.isBusy) {
 
-      this.element.classList.remove("open");
-      App.emit("faded-overlay:hide");
+        var path = event.target.getAttribute("data-page");
 
-      var page = event.target.getAttribute("data-page");
+        // set selected as true on the targeted side_menu_item
+        Samson.App.Data.sideMenu.pages.forEach(function(page) {
+          if (page.path === path) {
+            Samson.App.Data.sideMenu.selected = path;
+          }
+        });
 
-      // only navigate if they aren't on the page
-      if (page !== App.Router.currentPage) {
-        App.Router.navigate(page, "right");
+        // force the sidemenu to rerender if the selected sidemenu_item has changed
+        this.resetState();
+
+        // only navigate if we aren't already on the selected page
+        if (path !== Samson.App.Router.currentPage) {
+          Samson.App.Router.navigate(path, "right");
+        } else {
+          this.closeSideMenu();
+          Samson.App.emit("side-menu:hit");
+        }
+
       }
 
     }
@@ -59,37 +83,54 @@ module.exports = {
 
   appEvents: {
 
-    'header-button:hit': function() {
-      this.handleSideMenu();
+    'header:menu-button:hit': function() {
+      this.toggleSideMenu();
     },
 
     'faded-overlay:hit': function() {
-      this.element.classList.remove("open");
+      if (this.isOpen) {
+        this.closeSideMenu();
+      }
     }
 
   },
 
   extend: {
-    handleSideMenu: function() {
 
-      // if the sidemenu is closed then open it, if open then close it
-      if (this.element.classList.contains("open")) {
-        this.element.classList.remove("open");
+    isOpen: false,
+
+    closeSideMenu: function() {
+      this.element.classList.remove("open");
+      this.isOpen = false;
+    },
+
+    openSideMenu: function() {
+      this.element.classList.add("open");
+      this.isOpen = true;
+    },
+
+    toggleSideMenu: function() { // if the sidemenu is closed then open it, if open then close it
+      if (this.isOpen) {
+        this.closeSideMenu();
       } else {
-        this.element.classList.add("open");
+        this.openSideMenu();
       }
     }
+
   },
 
   router: {
+
+    // make sure that the side menu is closed before any new page is transitioned to
     beforeAnimate: function(data, callback) {
 
+      if (this.isOpen  && data.currentAnimation !== "update") {
+        this.closeSideMenu();
+      }
+
       callback();
-    },
-
-    duringAnimate: function(data) { // no callback
-
     }
+
   },
 
   // must synchronously return an object that will set the initial state of the component. this object will be passed to the templating engine
@@ -97,10 +138,8 @@ module.exports = {
 
     var state = {
 
-      pages: [
-        {page:"home", display:"Home"},
-        {page:"login", display:"Login"}
-      ]
+      pages: Samson.App.Data.sideMenu.pages,
+      selected: Samson.App.Data.sideMenu.selected
 
     };
 
@@ -108,28 +147,21 @@ module.exports = {
 
   },
 
-  // this function runs before the Page is rendered
-  beforeRender : function(callback) {
-
-    callback();
-
-  },
-
-  // this function runs after the Page is rendered
+  // this function runs after the Component is rendered
   afterRender : function(callback) {
 
     // cache the sidemenu element
-    App.DOM.samson_sidemenu = this.element;
+    Samson.App.DOM.samson_sidemenu = this.element;
 
     callback();
 
   },
 
-  // this function runs right before the Page is destroyed
+  // this function runs right before the Component is destroyed
   beforeRemove : function(callback) {
 
     // delete the sidemenu element from the cache
-    delete App.DOM.samson_sidemenu;
+    delete Samson.App.DOM.samson_sidemenu;
 
     callback();
 

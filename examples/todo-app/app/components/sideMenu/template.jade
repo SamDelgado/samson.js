@@ -1,2 +1,4 @@
-for item in pages
-  .sidemenu_item(data-page=item.page) #{item.display}
+for page in pages
+  div(data-page=page.path class="samson_sidemenu_item #{(page.path === selected ? 'selected' : '')}")
+    i.fa(class=page.icon)
+    | #{page.name}

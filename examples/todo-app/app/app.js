@@ -1,6 +1,7 @@
 
-var Log = require('modules/log');
 var Samson = require('samson.js');
+var Log = require('modules/log');
+var Todos = require('common/todosCollection');
 
 // pass in the name of the app object if you want it added to the global scope
 var App = Samson.createApp("App");
@@ -25,42 +26,28 @@ var options = {
   pages: require("pages"),
 
   data: {
-    HeaderTitle: "Home"
+    sideMenu : {
+      selected: "home",
+      pages: [
+        {path:"home", name:"Home", icon: "fa-home"},
+        {path:"addTodos", name:"Add Todos", icon: "fa-plus"},
+        {path:"viewTodos", name:"View Todos", icon: "fa-tasks"}
+      ]
+    }
   },
 
   // any custom methods/properties you want attached directly to the app object. the context will be the app object
   custom: {
     Models : {},
-    Collections : {}
+    Collections : {
+      Todos: new Todos()
+    }
   },
 
   router : {
     animations: require("common/router_animations"),
     defaultNavigateAnimation: "right",
-    defaultBackAnimation: "left",
-    beforeNavigate: function(data, callback) {
-      var error = "You suck at navigating";
-      //callback(error); // pass error message through to stop the router navigation from completing
-      callback();
-    },
-    afterNavigate: function(data, callback) {
-      callback();
-    },
-    beforeAnimate: function(data, callback) {
-      callback();
-    },
-    duringAnimate: function(data) { // no callback
-      //Log("Router during animate");
-    },
-    afterAnimate: function(data, callback) {
-      callback();
-    },
-    beforeBack: function(data, callback) {
-      callback();
-    },
-    afterBack: function(data, callback) {
-      callback();
-    }
+    defaultBackAnimation: "left"
   }
 
 };

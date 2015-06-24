@@ -37,6 +37,7 @@
     <preference name="Fullscreen" value="false" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="HideKeyboardFormAccessoryBar" value="true" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <preference name="Orientation" value="portrait" />
     <preference name="BackupWebStorage" value="local" />
     <preference name="StatusBarOverlaysWebView" value="false" />

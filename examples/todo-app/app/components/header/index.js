@@ -1,10 +1,7 @@
 
-function setHeaderHeight() {
-  var max = 200; min = 50;
-  return (Math.floor(Math.random()*(max-min+1) + min)) + "px";
-}
+var Samson = require('samson.js');
 
-var header_height = "60px";// setHeaderHeight();
+var header_height = "60px";
 
 module.exports = {
 
@@ -45,7 +42,7 @@ module.exports = {
       "vertical-align": "middle"
     },
 
-    "#samson_header_button": {
+    "#samson_header_menu_button, #samson_header_back_button": {
       "position": "absolute",
       "left": "10px",
       "top": "10px",
@@ -62,12 +59,12 @@ module.exports = {
 
   domEvents: {
 
-    'touch' : function(event) {
-      console.log("Header Hit");
+    'touch #samson_header_menu_button': function() {
+      Samson.App.emit('header:menu-button:hit');
     },
 
-    'touch #samson_header_button': function() {
-      App.emit('header-button:hit');
+    'touch #samson_header_back_button': function() {
+      Samson.App.emit('header:back-button:hit');
     }
 
   },
@@ -75,51 +72,79 @@ module.exports = {
   appEvents: {
 
     'app:initialized': function() {
-      this.handleHeader("add");
+      this.showHeader();
     },
 
     'header:show': function() {
-      this.handleHeader("add");
+      this.showHeader();
     },
 
     'header:hide': function() {
-      this.handleHeader("remove");
+      this.hideHeader();
     }
 
   },
 
   extend: {
+
     headerHeight: header_height,
-    handleHeader: function(kind) {
-      this.element.classList[kind]("show");
+
+    isVisible : false,
+
+    hideHeader : function() {
+      this.element.classList.remove("show");
+      this.isVisible = false;
+    },
+
+    showHeader : function() {
+      this.element.classList.add("show");
+      this.isVisible = true;
+    },
+
+    toggleHeader: function() {
+      if (this.isVisible) {
+        this.hideHeader();
+      } else {
+        this.showHeader();
+      }
     }
+
   },
 
   router: {
+
     beforeAnimate: function(data, callback) {
 
       // if the page is fullscreen, then hide the header and stretch the page to the top of the screen
-      if (App.Router.pageCache[data.nextPage].fullscreen) {
-        App.DOM[data.inactivePageElement].style.top = "";
-        this.handleHeader("remove");
+      if (Samson.App.Router.pageCache[data.nextPage].fullscreen) {
+        Samson.App.DOM[data.inactivePageElement].style.top = "";
+        this.hideHeader();
       } else {
-        App.DOM[data.inactivePageElement].style.top = this.headerHeight;
-        this.handleHeader("add");
+        Samson.App.DOM[data.inactivePageElement].style.top = header_height;
+        this.showHeader();
       }
 
       callback();
     },
 
     duringAnimate: function(data) { // no callback
-      this.setState({title: App.Data.HeaderTitle});
+
+      // if the next page has a previousPage, then replace the #samson_header_menu_button with #samson_menu_back_button
+      if (Samson.App.Pages[data.nextPage].previousPage) {
+        Samson.App.Data.Header.button = "back";
+      }
+
+      this.resetState();
     }
+
   },
 
   // must synchronously return an object that will set the initial state of the component. this object will be passed to the templating engine
   setInitialState : function() {
 
     var state = {
-      title: "Header"
+      title: Samson.App.Data.Header.title,
+      button: Samson.App.Data.Header.button
     };
 
     return state;
@@ -129,8 +154,16 @@ module.exports = {
   // this function runs before the Page is rendered
   beforeRender : function(callback) {
 
-    if (!App.Data.HeaderTitle) {
-      App.Data.HeaderTitle = "Home";
+    if (!Samson.App.Data.Header) {
+      Samson.App.Data.Header = {};
+    }
+
+    if (!Samson.App.Data.Header.title) {
+      Samson.App.Data.Header.title = "App";
+    }
+
+    if (!Samson.App.Data.Header.button) {
+      Samson.App.Data.Header.button = "menu";
     }
 
     callback();
@@ -141,7 +174,7 @@ module.exports = {
   afterRender : function(callback) {
 
     // cache the header element
-    App.DOM.samson_header = this.element;
+    Samson.App.DOM.samson_header = this.element;
 
     callback();
 
@@ -151,7 +184,7 @@ module.exports = {
   beforeRemove : function(callback) {
 
     // delete the header element from the chache
-    delete App.DOM.samson_header;
+    delete Samson.App.DOM.samson_header;
 
     callback();
 

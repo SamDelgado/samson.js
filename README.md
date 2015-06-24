@@ -48,6 +48,10 @@ App.configure(options, function() {
   * "Pages" and "Components" that automatically handle their whole lifecycle. No more "zombie" views or event listeners
   * Lots more that I will add here later...
 
+## Framework Comparison
+
+  * Need to fill this out
+
 ## To Do
 
   * Use JSDocs for documentation of the framework

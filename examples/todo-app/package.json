@@ -5,12 +5,10 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "samson.js": "0.1.0",
+    "quojs": "3.0.8",
+    "samson.js": "*",
     "async-lite": "1.0.3",
-    "lodash.isequal": "3.0.4",
-    "jss": "1.0.8",
-    "jss-vendor-prefixer": "0.2.1",
-    "jss-extend": "0.1.6"
+    "autosize": "3.0.6"
   },
   "devDependencies": {
     "aliasify": "~1.7.2",

@@ -3,6 +3,8 @@ module.exports = {
 
   home: require('./home'),
 
-  login: require('./login')
+  addTodos: require('./addTodos'),
+
+  viewTodos: require('./viewTodos')
 
 };

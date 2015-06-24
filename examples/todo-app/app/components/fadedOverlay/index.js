@@ -1,4 +1,6 @@
 
+var Samson = require('samson.js');
+
 module.exports = {
 
   el: 'samson_faded_overlay',
@@ -27,46 +29,69 @@ module.exports = {
   domEvents: {
 
     'touch' : function(event) {
-      this.element.classList.remove("show");
-      App.emit("faded-overlay:hit");
+      this.hideFadedOverlay();
+      Samson.App.emit("faded-overlay:hit");
     }
 
   },
 
   appEvents: {
 
-    'faded-overlay:show': function() {
-      this.element.classList.add("show");
+    'side-menu:hit': function() {
+      if (this.isVisible) {
+        this.hideFadedOverlay();
+      }
     },
 
-    'faded-overlay:hide': function() {
-      this.element.classList.remove("show");
-    },
-
-    'header-button:hit': function() {
-      this.element.classList.add("show");
+    'header:menu-button:hit': function() {
+      this.toggleFadedOverlay();
     }
 
   },
 
-  extend: {},
+  extend: {
 
-  router: {
-    beforeAnimate: function(data, callback) {
+    isVisible : false,
 
-      callback();
+    hideFadedOverlay : function() {
+      this.element.classList.remove("show");
+      this.isVisible = false;
     },
 
-    duringAnimate: function(data) { // no callback
+    showFadedOverlay : function() {
+      this.element.classList.add("show");
+      this.isVisible = true;
+    },
 
+    toggleFadedOverlay: function() {
+      if (this.isVisible) {
+        this.hideFadedOverlay();
+      } else {
+        this.showFadedOverlay();
+      }
     }
+
+  },
+
+  router: {
+
+    // make sure that the faded overlay is removed before any new page is transitioned to
+    beforeAnimate: function(data, callback) {
+
+      if (this.isVisible && data.currentAnimation !== "update") {
+        this.hideFadedOverlay();
+      }
+
+      callback();
+    }
+
   },
 
   // this function runs after the Page is rendered
   afterRender : function(callback) {
 
     // cache the faded overlay element
-    App.DOM.samson_faded_overlay = this.element;
+    Samson.App.DOM.samson_faded_overlay = this.element;
 
     callback();
 
@@ -76,7 +101,7 @@ module.exports = {
   beforeRemove : function(callback) {
 
     // delete the faded overlay element from the cache
-    delete App.DOM.samson_faded_overlay;
+    delete Samson.App.DOM.samson_faded_overlay;
 
     callback();
 
