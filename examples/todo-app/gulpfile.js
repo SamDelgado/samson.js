@@ -2,7 +2,8 @@
 
 var gulp = require('gulp');
 var runSequence = require('run-sequence');
-var shell = require('gulp-shell');
+var run = require('gulp-run');
+var replace = require('gulp-replace-task');
 
 // set our device and environment variables
 var production = false; // are we running the app in production
@@ -54,7 +55,7 @@ gulp.task('browserify', function () {
 // uglify our bundles javascript for production
 var uglify = require('gulp-uglify');
 
-gulp.task('uglify', ['browserify'], function () {
+gulp.task('uglify', function () {
 
   var uglifyStream = gulp.src(destination + "/js/" + filename + ".js")
     .pipe(uglify({
@@ -75,39 +76,51 @@ gulp.task('copy-assets', function() {
     .pipe(gulp.dest('./www/'));
 });
 
-// Emulate the cordova app
-gulp.task('cordova-emulate', shell.task(
-  ['cordova emulate ios'], {quiet: true} // add 'cordova emulate android' if necessary
-));
-
-// Prepare the cordova app and reload the server
-function prepareAndReload() {
-  return gulp.src('')
-    .pipe(shell(['cordova prepare'], {quiet: true}))
-    .pipe(liveReload());
-}
 
 // Live reload the cordova app
 var liveReload = require('gulp-livereload');
-var http = require('http');
-var ecstatic = require('ecstatic');
 
-function liveReloadServer() {
+var serverHost = require('ip').address();
+var serverPort = 8000;
 
-  var host = require('ip').address();
-  var port = 8000;
-  var url = "http://" + host + ":" + port + "/";
-  http.createServer(ecstatic({
-    root: "platforms",
-    cache: 0
-  })).listen(port);
+// Prepare the cordova app and reload the server
+gulp.task('prepare-and-reload', function (callback) {
+  run('cordova prepare').exec('preparing...', function() {
+    liveReload.reload();
+    callback();
+  });
+});
 
+gulp.task('start-livereload-server', function(callback) {
   liveReload.listen();
+  console.log("Livereload server now listening on port 35729");
+  callback();
+});
 
-  console.log("Livereload server listening on port " + port);
+// Emulate the cordova app
+gulp.task('cordova-emulate', function(callback) {
+  var cordovaEmulateIOS = new run.Command('cordova emulate ios', {silent: true});
+  var cordovaRunAndroid = new run.Command('cordova run android --device', {silent: true});
+  cordovaEmulateIOS.exec();
+  cordovaRunAndroid.exec();
+  callback();
+});
+
+gulp.task('start-cordova-server', function(callback) {
+  var cordovaServe = new run.Command('cordova serve', {silent: true});
+  var cordovaEmulateIOS = new run.Command('cordova emulate ios'); // , {silent: true}
+  var cordovaRunAndroid = new run.Command('cordova run android --device', {silent: true});
+  cordovaServe.exec();
+  cordovaEmulateIOS.exec();
+  cordovaRunAndroid.exec();
+  console.log('Cordova server now listening on port 8000');
+  callback();
+});
+
+gulp.task('watch-for-file-changes',  function() {
 
   // watch for changes to the index.html file
-  gulp.watch(['./www/index.html'], prepareAndReload);
+  gulp.watch(['./app/assets/index.html'], ['copy-html']);
 
   // watch for changes to the app's JS or jade files
   gulp.watch(['./app/**/*.js', './app/**/*.jade'], ['build-js']);
@@ -115,11 +128,29 @@ function liveReloadServer() {
   // watch for changes to the Samson.js lib files
   gulp.watch(['../../lib/**/*.js'], ['build-js']);
 
-}
+});
 
-function developmentBuild() {
+// html injection
+gulp.task('inject-html', function() {
+  return gulp.src('./www/index.html')
+    .pipe(replace({
+      patterns: [
+        {
+          match: /<head>/,
+          replacement: "<head><script type='text/javascript' src='http://" + serverHost + ":35729/livereload.js?snipver=1'></script>"
+        },
+        {
+          match: /<\/body>/,
+          replacement: "<script>document.addEventListener('deviceready', function () {var __devSite = 'http://" + serverHost + ":" + serverPort + "/';if (!/^http/.test(location)) {var contentPath = /\\/www\\/.+$/.exec(location)[0];__devSite = __devSite + cordova.platformId + contentPath;location.replace(__devSite);}}, false);</script></body>"
+        }
+      ]
+    }))
+    .pipe(gulp.dest('./www/'))
+});
+
+function developmentBuild(callback) {
   production = false;
-  runSequence('browserify', 'copy-assets', 'cordova-emulate', liveReloadServer);
+  runSequence('browserify', 'copy-assets', 'inject-html', 'start-livereload-server', 'start-cordova-server', 'watch-for-file-changes', callback);
 }
 
 /***************** Gulp Tasks *********************/
@@ -130,7 +161,13 @@ gulp.task('dev', developmentBuild); // gulp dev
 // Build the app for production (uglified)
 gulp.task('prod', function(callback) {
   production = true;
-  runSequence('uglify', 'copy-assets', callback);
+  runSequence('browserify', 'uglify', 'copy-assets', callback);
 });
 
-gulp.task('build-js', ['browserify'], prepareAndReload);
+gulp.task('copy-html', function(callback) {
+  runSequence('copy-assets', 'inject-html', 'prepare-and-reload', callback);
+});
+
+gulp.task('build-js', function(callback) {
+  runSequence('browserify', 'prepare-and-reload', callback);
+});

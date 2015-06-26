@@ -64,6 +64,7 @@ App.configure(options, function() {
 
     document.addEventListener('deviceready', function () {
       Log("Device is now ready");
+
       startApp();
     }, false);
 

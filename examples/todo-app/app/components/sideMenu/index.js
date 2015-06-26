@@ -50,12 +50,12 @@ module.exports = {
   domEvents: {
 
     // handle any .samson_sidemenu_item being touched
-    'touch .samson_sidemenu_item': function(event) {
+    'touch .samson_sidemenu_item': function(event, target) {
 
       // make sure the router isn't already busy before accepting any events from the sidemenu
       if (!Samson.App.Router.isBusy) {
 
-        var path = event.target.getAttribute("data-page");
+        var path = target.getAttribute("data-page");
 
         // set selected as true on the targeted side_menu_item
         Samson.App.Data.sideMenu.pages.forEach(function(page) {
@@ -69,7 +69,13 @@ module.exports = {
 
         // only navigate if we aren't already on the selected page
         if (path !== Samson.App.Router.currentPage) {
+
+          // remove the focus_element so that it doesn't try to refocus during the page animation
+          delete Samson.App.DOM.samson_focus_element;
+
+          // navigate to the new page
           Samson.App.Router.navigate(path, "right");
+
         } else {
           this.closeSideMenu();
           Samson.App.emit("side-menu:hit");
@@ -102,11 +108,33 @@ module.exports = {
     closeSideMenu: function() {
       this.element.classList.remove("open");
       this.isOpen = false;
+
+      // restore focus to the element that had focus before the sideMenu was open
+      if (Samson.App.DOM.samson_focus_element) {
+        Samson.App.DOM.samson_focus_element.focus();
+
+        // move the cursor to the end of the text
+        var value_length = Samson.App.DOM.samson_focus_element.oldCursorPosition === undefined ? false : Samson.App.DOM.samson_focus_element.oldCursorPosition;
+        value_length = (value_length === false) ? Samson.App.DOM.samson_focus_element.value.length : value_length;
+        Samson.App.DOM.samson_focus_element.setSelectionRange(value_length, value_length);
+
+        delete Samson.App.DOM.samson_focus_element;
+      }
+
     },
 
     openSideMenu: function() {
       this.element.classList.add("open");
       this.isOpen = true;
+
+      // hide the keyboard and remove focus from an input/textarea element if necessary
+      if (document.activeElement !== document.body) {
+        Samson.App.DOM.samson_focus_element = document.activeElement;
+        Samson.App.DOM.samson_focus_element.oldCursorPosition = Samson.App.DOM.samson_focus_element.selectionStart;
+
+        Samson.App.DOM.samson_focus_element.blur();
+      }
+
     },
 
     toggleSideMenu: function() { // if the sidemenu is closed then open it, if open then close it

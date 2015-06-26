@@ -26,12 +26,18 @@ path: 'viewTodos',
 
     ".todo-item-text": {
       width: "100%",
-      "background-color": Colors.white,
+      "background-color": Colors.blue,
+      color: Colors.white,
       "border-radius": "4px",
-      padding: "3px",
-      "font-size": "1.3rem",
+      padding: "4px",
+      "font-size": "1.5rem",
       "line-height": 1.2,
       "border": "3px solid " + Colors.blue
+    },
+
+    ".todo-item-text:focus": {
+      "background-color": Colors.white,
+      color: Colors.black
     },
 
     ".todo-item-remove-button": {
@@ -56,6 +62,7 @@ path: 'viewTodos',
 
   domEvents : {
 
+    // remove a todo item if the remove button is touched
     'touch .todo-item-remove-button' : function(e, target) {
 
       var todo_id = target.parentNode.getAttribute("data-id");
@@ -68,9 +75,17 @@ path: 'viewTodos',
 
     },
 
-    'input .todo-item-text': function(e) {
+    // remove focus from any textarea if the user touches off of it
+    'touch #viewTodos-page': function(e) {
 
-      autosize.update(e.target);
+      if (e.target.id === "viewTodos-page") {
+        document.activeElement.blur();
+      }
+
+    },
+
+    // store the new array of todos if any todo item's value is updated
+    'input .todo-item-text': function(e) {
 
       var todo_id = e.target.parentNode.getAttribute("data-id");
       var todo_text = e.target.value;
@@ -98,7 +113,7 @@ path: 'viewTodos',
   // this function runs before the Page is rendered
   beforeRender : function(callback) {
 
-    App.Data.Header.title = "View ToDos";
+    App.Data.Header.title = "Your ToDo List";
 
     callback();
 
@@ -107,7 +122,7 @@ path: 'viewTodos',
   // this function runs after the Page is rendered
   afterRender : function(callback) {
 
-    autosize(document.querySelectorAll("textarea"));
+    autosize(this.element.querySelectorAll("textarea"));
 
     callback();
 
@@ -116,7 +131,7 @@ path: 'viewTodos',
   // this function runs right before the Page is destroyed
   beforeRemove : function(callback) {
 
-    autosize.destroy(document.querySelectorAll("textarea"));
+    autosize.destroy(this.element.querySelectorAll("textarea"));
 
     callback();
 

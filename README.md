@@ -5,6 +5,10 @@
 
 A performant and easy to learn mobile app framework that will allow you to rapidly build native-like apps that target modern devices (iOS 7+ / Android 4+). Used with Browserify, Samson is a great foundation for your next Cordova/Phonegap app. A specific project structure is recommended for maximum productivity. Full app examples can be found in the examples folder.
 
+## Disclaimer
+
+Samson.js is under heavy development and does not currently have a stable API. I will be working hard to complete the basic documentation, and start creating tests so that people can feel comfortable using this in their next project. I would love to get any feedback about Samson's architecture, complexity, or code quality.
+
 ## Installation and Usage
 
 ```bash

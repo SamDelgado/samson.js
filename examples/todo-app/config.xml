@@ -9,12 +9,9 @@
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
-    <allow-intent href="tel:*" />
-    <allow-intent href="sms:*" />
-    <allow-intent href="mailto:*" />
-    <allow-intent href="geo:*" />
+    <allow-navigation href="http://*" />
+    <allow-navigation href="https://*" />
+    <allow-intent href="*" />
     <platform name="android">
         <allow-intent href="market:*" />
     </platform>
@@ -22,21 +19,16 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-
+    <plugin name="cordova-plugin-crosswalk-webview" spec="https://github.com/SamDelgado/cordova-plugin-crosswalk-webview.git" />
     <plugin name="cordova-plugin-whitelist" version="1" />
     <plugin name="cordova-plugin-device" spec="^1.0.0" />
     <plugin name="cordova-plugin-console" spec="^1.0.0" />
     <plugin name="cordova-plugin-statusbar" spec="^1.0.0" />
-    <plugin name="pro.fing.cordova.gapreload" spec="^1.1.0">
-      <variable name="SERVER_HOST" value="localhost" />
-      <variable name="SERVER_PORT" value="8000" />
-      <variable name="LIVERELOAD_HOST" value="localhost" />
-      <variable name="LIVERELOAD_PORT" value="35729" />
-    </plugin>
-
+    <plugin name="cordova-plugin-keyboard" spec="^0.1.2" />
     <preference name="Fullscreen" value="false" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="HideKeyboardFormAccessoryBar" value="true" />
+    <preference name="KeyboardShrinksView" value="false" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <preference name="Orientation" value="portrait" />
     <preference name="BackupWebStorage" value="local" />
@@ -45,4 +37,7 @@
     <preference name="StatusBarStyle" value="lightcontent" />
     <preference name="SplashScreenDelay" value="10000" />
     <preference name="AutoHideSplashScreen" value="false" />
+    <feature name="Keyboard">
+        <param name="ios-package" onload="true" value="CDVKeyboard" />
+    </feature>
 </widget>

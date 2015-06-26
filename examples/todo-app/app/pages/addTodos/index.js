@@ -14,34 +14,29 @@ module.exports = {
     "#addTodos-page": {
       position: "absolute",
       width: "100%",
-      height: "100%"
-    },
-
-    ".add-new-todo-box": {
-      "margin": "40px 0 20px 0",
-      "padding": "0 20px 0 20px",
-      "width": "100%"
+      height: "100%",
+      padding: "20px"
     },
 
     "#new-todo-textarea": {
       width: "100%",
-      "font-size": "1.3rem",
+      "font-size": "1.5rem",
       "line-height": 1.2,
-      padding: "3px",
-      "margin-bottom": "20px",
+      padding: "4px",
+      "margin-bottom": "40px",
       "background-color": Colors.white,
       "border-radius": "5px",
       "border": "3px solid " + Colors.gray
     },
 
     "#new-todo-submit-button": {
-      "width": "100%",
-      "height": "30px",
+      width: "100%",
+      "height": "40px",
       "background-color": Colors.turquoise,
       "border-radius": "5px",
       color: Colors.white,
-      "font-size": "2rem",
-      "line-height": "30px",
+      "font-size": "2.5rem",
+      "line-height": "40px",
       "text-align": "center",
       "vertical-align": "middle"
     }
@@ -54,9 +49,8 @@ module.exports = {
 
   domEvents : {
 
+    // update the value of the current todo in localStorage and resize the textarea if necessary
     'input #new-todo-textarea': function(e) {
-
-      autosize.update(App.DOM.new_todo_textarea);
 
       // store the current value of the new ToDo Item
       App.Models.TodoItem = App.DOM.new_todo_textarea.value;
@@ -64,17 +58,14 @@ module.exports = {
 
     },
 
+    // validate the todo and add it to the Todos collection
     'touch #new-todo-submit-button': function() {
-
-      App.$("#new-todo-form").trigger("submit");
-
-    },
-
-    'submit #new-todo-form': function(e) {
 
       var todo = App.DOM.new_todo_textarea.value;
 
       App.DOM.new_todo_textarea.value = "";
+      autosize.update(App.DOM.new_todo_textarea);
+
       App.Models.TodoItem = "";
       db.remove("TodoItem");
 

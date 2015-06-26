@@ -6,6 +6,17 @@ module.exports = {
     "display": "none"
   },
 
+  "select, input, textarea, button": {
+    appearance: "none"
+  },
+
+  /*
+  "input:focus, textarea:focus": {
+    "outline-style": "none",
+    "outline-width": "0"
+  },
+  */
+
   /* Set the base font size to 10px and use the Exo font */
   "html": {
     "font-size": "10px",
