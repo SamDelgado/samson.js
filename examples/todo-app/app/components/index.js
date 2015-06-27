@@ -7,6 +7,8 @@ module.exports = {
 
   fadedOverlay : require('./fadedOverlay'),
 
-  transparentOverlay : require('./transparentOverlay')
+  transparentOverlay : require('./transparentOverlay'),
+
+  alert :  require('./alerts')
 
 };

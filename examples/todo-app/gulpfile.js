@@ -108,7 +108,7 @@ gulp.task('cordova-emulate', function(callback) {
 
 gulp.task('start-cordova-server', function(callback) {
   var cordovaServe = new run.Command('cordova serve', {silent: true});
-  var cordovaEmulateIOS = new run.Command('cordova emulate ios'); // , {silent: true}
+  var cordovaEmulateIOS = new run.Command('cordova emulate ios', {silent: true});
   var cordovaRunAndroid = new run.Command('cordova run android --device', {silent: true});
   cordovaServe.exec();
   cordovaEmulateIOS.exec();

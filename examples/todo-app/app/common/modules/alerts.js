@@ -5,13 +5,13 @@
 // if the options argument is a string and not an object, then we assume that this is the message
 // to display in the alert
 
-function createAlert(options, alert_type) {
+function createAlert(options, color) {
 
   var message;
   var title;
   var data;
 
-  if (typeof options === 'string') {
+  if (typeof options === 'string' || typeof options === 'number') {
     message = options;
   }
 
