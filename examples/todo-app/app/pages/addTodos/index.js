@@ -27,6 +27,8 @@ module.exports = {
     // validate the todo and add it to the Todos collection
     'touch #new-todo-submit-button': function() {
 
+      App.emit("alert:success", "New ToDo Item submitted successfully!");
+
       var todo = App.DOM.new_todo_textarea.value;
 
       App.DOM.new_todo_textarea.value = "";

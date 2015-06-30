@@ -8,9 +8,6 @@ var App = Samson.createApp("App");
 
 // add the app name to the global scope if name is passed in
 global.App = App;
-window.App = App;
-
-global.Colors = require('common/colors');
 
 // Samson App options
 var options = {

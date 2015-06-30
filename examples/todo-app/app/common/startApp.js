@@ -5,6 +5,7 @@ module.exports = function() {
 
   async.parallel({
 
+    // do things here before we navigate to the first page
     loadDeviceEvents: function(callback) {
       callback(null);
     },
@@ -19,6 +20,7 @@ module.exports = function() {
 
       App.emit("app:initialized");
 
+      // Navigate to the Home page
       App.Router.navigate("home", "fade");
 
     }

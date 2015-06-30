@@ -1,4 +1,5 @@
 
+var Utils = require('common/utils');
 var autosize = require('autosize');
 
 module.exports = {
@@ -19,6 +20,8 @@ path: 'viewTodos',
     'touch .todo-item-remove-button' : function(e, target) {
 
       var todo_id = target.parentNode.getAttribute("data-id");
+
+      App.emit("alert:error", todo_id + " destroyed");
 
       // remove the autosize listener on this items textarea
       autosize.destroy(target.parentNode.querySelector("textarea"));
@@ -47,7 +50,7 @@ path: 'viewTodos',
       App.Collections.Todos.update(todo_id, todo_text);
       this.resetState();
 
-    },
+    }
 
   },
 

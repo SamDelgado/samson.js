@@ -9,16 +9,31 @@ module.exports = {
 
   el: 'samson_alerts_container',
 
-  domEvents: {
+  domEvents: {},
 
+  appEvents: {
+
+    'alert:success': function(message) {
+      this.createAlert(message, "success");
+    },
+
+    'alert:error': function(message) {
+      this.createAlert(message, "error");
+    },
+
+    'alert:info': function(message) {
+      this.createAlert(message, "info");
+    },
+
+    'alert': function(message, bg_color, text_color) {
+      this.createAlert(message, "info", bg_color, text_color);
+    }
 
   },
 
-  appEvents: {},
-
   extend: {
 
-    createAlert: function(message, color) {
+    createAlert: function(message, alert_type, bg_color, text_color) {
 
       if (typeof message === 'number') {
         message = message + "";
@@ -29,7 +44,15 @@ module.exports = {
       var alert = document.createElement("div")
       alert.id = "alert-" + Date.now();
       alert.classList.add("samson_alert");
-      alert.style.backgroundColor = color;
+
+      // add the success or error alert class if that is the chosen alert_type
+      if (!bg_color && !text_color && alert_type !== "info") alert.classList.add(alert_type + "_alert");
+
+      // add the background color if provided
+      if (bg_color) alert.style.backgroundColor = bg_color;
+
+      // add the text color if provided
+      if (text_color) alert.style.color = text_color;
       alert.textContent = message;
 
       // append the alert to the samson_alerts_container
@@ -41,13 +64,14 @@ module.exports = {
       }
 
       // initiate the alert fade in
-      window.getComputedStyle(alert).cssText; // we use getComputedStyle to make sure the element is already added to the DOM before applying the transition
+
+      // use getComputedStyle to make sure the element is already added to the DOM before applying the transition class
+      window.getComputedStyle(alert).cssText;
       alert.classList.add("show");
 
       // show the notification for 3 seconds before removing
       setTimeout(function() {
 
-        //alert.classList.remove("show");
         alert.style.opacity = 0;
 
         setTimeout(function() {
@@ -58,20 +82,20 @@ module.exports = {
 
     },
 
-    success: function(options) {
-      this.createAlert(options, success_color);
+    success: function(message) {
+      this.createAlert(message, "success");
     },
 
-    error: function(options) {
-      this.createAlert(options, error_color);
+    error: function(message) {
+      this.createAlert(message, "error");
     },
 
-    info: function(options) {
-      this.createAlert(options, info_color);
+    info: function(message) {
+      this.createAlert(message, "info");
     },
 
-    custom: function(options, color) {
-      this.createAlert(options, color);
+    custom: function(message, bg_color, text_color) {
+      this.createAlert(message, "info", bg_color, text_color);
     }
 
   },

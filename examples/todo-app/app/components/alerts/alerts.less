@@ -3,21 +3,30 @@
   position: absolute;
   top: 60px; right: 0; bottom: 0; left: 0;
   text-align: center;
-  z-index: 9;
 }
 
 .samson_alert {
+  position: relative;
+  z-index: 1000;
   width: 100%;
-  padding: 2px 8px 2px 8px;
+  padding: 4px 8px 4px 8px;
   font-size: 1.3rem;
   line-height: 1.4;
   text-align: center;
-  background-color: blue;
-  color: #fff;
+  background-color: @blue;
+  color: @white;
   max-height: 0;
   opacity: 0.5;
   overflow: hidden;
   transition: all 0.6s linear;
+}
+
+.samson_alert.success_alert {
+  background-color: @turquoise;
+}
+
+.samson_alert.error_alert {
+  background-color: @red;
 }
 
 .samson_alert.show {

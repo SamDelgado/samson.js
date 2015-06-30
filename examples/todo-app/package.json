@@ -26,7 +26,6 @@
     "ip": "~0.3.2",
     "gulp-less": "~3.0.3",
     "less-plugin-autoprefix": "~1.4.2",
-    "less-plugin-clean-css": "~1.5.0",
-    "gulp-minify-css": "~1.2.0"
+    "less-plugin-clean-css": "~1.5.0"
   }
 }
