@@ -5,22 +5,6 @@ module.exports = {
   subPageOf: false,
   previousPage: false,
   template: require("./template.jade"),
-  style: {
-
-    "#home-page": {
-      position: "absolute",
-      width: "100%",
-      height: "100%"
-    },
-
-    ".app-info": {
-      "width": "80%",
-      margin: "20px auto 20px auto",
-      "font-size": "1.6rem",
-      "line-height": 1.4
-    }
-
-  },
 
   domEvents : {},
 

@@ -9,40 +9,6 @@ module.exports = {
   previousPage: false,
   backSafe: true,
   template: require("./template.jade"),
-  style: {
-
-    "#addTodos-page": {
-      position: "absolute",
-      width: "100%",
-      height: "100%",
-      padding: "20px"
-    },
-
-    "#new-todo-textarea": {
-      width: "100%",
-      "font-size": "1.5rem",
-      "line-height": 1.2,
-      padding: "4px",
-      "margin-bottom": "40px",
-      "background-color": Colors.white,
-      "border-radius": "5px",
-      "border": "3px solid " + Colors.gray
-    },
-
-    "#new-todo-submit-button": {
-      width: "100%",
-      "height": "40px",
-      "background-color": Colors.turquoise,
-      "border-radius": "5px",
-      color: Colors.white,
-      "font-size": "2.5rem",
-      "line-height": "40px",
-      "text-align": "center",
-      "vertical-align": "middle"
-    }
-
-  },
-
   extend: {
     fullscreen: false,
   },
@@ -50,7 +16,7 @@ module.exports = {
   domEvents : {
 
     // update the value of the current todo in localStorage and resize the textarea if necessary
-    'input #new-todo-textarea': function(e) {
+    'input #new-todo-textarea': function() {
 
       // store the current value of the new ToDo Item
       App.Models.TodoItem = App.DOM.new_todo_textarea.value;

@@ -4,24 +4,6 @@ var Samson = require('samson.js');
 module.exports = {
 
   el: 'samson_transparent_overlay',
-  style: {
-
-    "#samson_transparent_overlay": {
-      "background-color": "#000",
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      "z-index": 10,
-      opacity: 0,
-      visibility: "hidden"
-    },
-
-    "#samson_transparent_overlay.show": {
-      visibility: "visible"
-    }
-  },
 
   domEvents: {
 

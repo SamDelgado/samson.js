@@ -5,47 +5,6 @@ module.exports = {
 
   el: 'samson_sidemenu',
   template: require("./template.jade"),
-  style: {
-
-    "#samson_sidemenu": {
-      "position": "absolute",
-      "z-index": 11,
-      "left": "-200px",
-      "top": "60px",
-      "bottom": "0",
-      "width" : "200px",
-      "background-color": "#666",
-      "transition": "all 0.2s ease-in-out",
-      "Transform": "translate3d(0,0,0)"
-    },
-
-    "#samson_sidemenu.open": {
-      "Transform": "translate3d(200px,0,0)"
-    },
-
-    ".samson_sidemenu_item": {
-      width: "100%",
-      padding: "10px 10px 10px 10px",
-      color: "#fff",
-      "text-align": "left",
-      "font-size": "2.2rem",
-      "border-bottom": "2px solid #bbb"
-    },
-
-    ".samson_sidemenu_item.selected": {
-      "background-color": "#1abc9c"
-    },
-
-    ".samson_sidemenu_item:active": {
-      "background-color": "#fff",
-      color: "#000"
-    },
-
-    '.samson_sidemenu_item i': {
-      "margin-right": "15px"
-    }
-
-  },
 
   domEvents: {
 

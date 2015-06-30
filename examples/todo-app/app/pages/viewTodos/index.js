@@ -8,53 +8,6 @@ path: 'viewTodos',
   previousPage: false,
   backSafe: true,
   template: require("./template.jade"),
-  style: {
-
-    "#viewTodos-page": {
-      position: "absolute",
-      width: "100%",
-      height: "100%",
-      padding: "20px 20px 0 20px",
-    },
-
-    ".todo-item": {
-      display: "inline-block",
-      position: "relative",
-      "margin-bottom": "15px",
-      "width": "92%"
-    },
-
-    ".todo-item-text": {
-      width: "100%",
-      "background-color": Colors.blue,
-      color: Colors.white,
-      "border-radius": "4px",
-      padding: "4px",
-      "font-size": "1.5rem",
-      "line-height": 1.2,
-      "border": "3px solid " + Colors.blue
-    },
-
-    ".todo-item-text:focus": {
-      "background-color": Colors.white,
-      color: Colors.black
-    },
-
-    ".todo-item-remove-button": {
-      position: "absolute",
-      top: "6px", right: "-26px",
-      width: "20px",
-      height: "20px",
-      "line-height": "20px",
-      "font-size": "1.5rem",
-      "text-align": "center",
-      "vertical-align": "middle",
-      "background-color": Colors.red,
-      "border-radius": "5px",
-      color: Colors.white
-    }
-
-  },
 
   extend: {
     fullscreen: false,
@@ -77,6 +30,7 @@ path: 'viewTodos',
 
     // remove focus from any textarea if the user touches off of it
     'touch #viewTodos-page': function(e) {
+      console.log("touched the page");
 
       if (e.target.id === "viewTodos-page") {
         document.activeElement.blur();

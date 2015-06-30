@@ -36,7 +36,6 @@ App.configure(options, function() {
   * You want to be told exactly how to structure your project files and folders so that you can just start writing code
   * You would love to a have a premade build script that automatically packages your app for you
   * You want to be able to quickly and easily add new features and components to your app
-  * You love Javascript. So much so that you would write your CSS in JS/JSON files if you could (with Samson.js you can)
 
 ## When Shouldn't You Use It?
 

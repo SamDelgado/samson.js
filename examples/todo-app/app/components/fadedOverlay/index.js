@@ -4,27 +4,6 @@ var Samson = require('samson.js');
 module.exports = {
 
   el: 'samson_faded_overlay',
-  style: {
-
-    "#samson_faded_overlay": {
-      "background-color": "#000",
-      position: "absolute",
-      top: "60px",
-      left: 0,
-      right: 0,
-      bottom: 0,
-      "z-index": 10,
-      opacity: 0,
-      visibility: "hidden",
-      transition: "opacity 0.2s linear, visibility 0s linear 0.2s"
-    },
-
-    "#samson_faded_overlay.show": {
-      opacity: "0.6",
-      visibility: "visible",
-      "transition-delay": "0s"
-    }
-  },
 
   domEvents: {
 

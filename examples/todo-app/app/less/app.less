@@ -1,0 +1,239 @@
+
+#addTodos-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+#new-todo-textarea {
+  width: 100%;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  padding: 4px;
+  margin-bottom: 40px;
+  background-color: @white;
+  border-radius: 5px;
+  border: 3px solid @gray;
+}
+
+#new-todo-submit-button {
+  width: 100%;
+  height: 40px;
+  background-color: @turquoise;
+  border-radius: 5px;
+  color: @white;
+  font-size: 2.5rem;
+  line-height: 40px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+#home-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.app-info {
+  width: 80%;
+  margin: 20px auto 20px auto;
+  font-size: 1.6rem;
+  line-height: 1.4;
+}
+
+
+#viewTodos-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 20px 20px 0 20px;
+}
+
+.todo-item {
+  display: inline-block;
+  position: relative;
+  margin-bottom: 15px;
+  width: 92%;
+}
+
+.todo-item-text {
+  width: 100%;
+  background-color: @blue;
+  color: @white;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  border: 3px solid @blue;
+}
+
+.todo-item-text:focus {
+  background-color: @white;
+  color: @black;
+}
+
+.todo-item-remove-button {
+  position: absolute;
+  top: 6px; right: -26px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  font-size: 1.5rem;
+  text-align: center;
+  vertical-align: middle;
+  background-color: @red;
+  border-radius: 5px;
+  color: @white;
+}
+
+
+#samson_alerts_container {
+  position: absolute;
+  top: 60px; right: 0; bottom: 0; left: 0;
+  text-align: center;
+  z-index: 9;
+}
+
+.samson_alert {
+  width: 100%;
+  padding: 2px 8px 2px 8px;
+  font-size: 1.3rem;
+  line-height: 1.4;
+  text-align: center;
+  background-color: blue;
+  color: #fff;
+  max-height: 0;
+  opacity: 0.5;
+  overflow: hidden;
+  transition: all 0.6s linear;
+}
+
+.samson_alert.show {
+  max-height: 100px;
+  opacity: 1;
+}
+
+
+#samson_faded_overlay {
+  background-color: #000;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s linear, visibility 0s linear 0.2s;
+}
+
+#samson_faded_overlay.show {
+  opacity: 0.6;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+
+#samson_header {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 60px;
+  z-index: 3;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+  opacity: 1;
+  background-color: #000000;
+  transition: all 0.6s ease;
+  transform: translate3d(0,-60px,0);
+}
+
+#samson_header.show {
+  opacity: 1;
+  transform: translate3d(0,0,0);
+}
+
+#samson_header_title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 40px;
+  line-height: 40px;
+  width: 60%;
+  transform: translate(-50%,-50%);
+  color: #ffffff;
+  font-size: 3rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#samson_header_menu_button, #samson_header_back_button {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  height: 40px;
+  line-height: 40px;
+  width: 40px;
+  color: #ffffff;
+  font-size: 4rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+#samson_sidemenu {
+  position: absolute;
+  z-index: 11;
+  left: -200px;
+  top: 60px;
+  bottom: 0;
+  width: 200px;
+  background-color: #666;
+  transition: all 0.2s ease-in-out;
+  transform: translate3d(0,0,0);
+}
+
+#samson_sidemenu.open {
+  transform: translate3d(200px,0,0);
+}
+
+.samson_sidemenu_item {
+  width: 100%;
+  padding: 10px 10px 10px 10px;
+  color: #fff;
+  text-align: left;
+  font-size: 2.2rem;
+  border-bottom: 2px solid #bbb;
+}
+
+.samson_sidemenu_item.selected {
+  background-color: #1abc9c;
+}
+
+.samson_sidemenu_item:active {
+  background-color: #fff;
+  color: #000;
+}
+
+.samson_sidemenu_item i {
+  margin-right: 15px;
+}
+
+
+#samson_transparent_overlay {
+  background-color: #000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+}
+
+#samson_transparent_overlay.show {
+  visibility: visible;
+}

@@ -15,10 +15,6 @@ global.Colors = require('common/colors');
 // Samson App options
 var options = {
 
-  style : require('common/styles'),
-
-  fonts : require('common/fonts'),
-
   //setComponents : require('common/setComponents'), // optional function that returns a component object - use if the app components are dynamic based on screensize, device OS, etc
 
   components : require('components'),

@@ -1,6 +1,8 @@
 'use strict';
 
 var gulp = require('gulp');
+var concat = require('gulp-concat');
+var rename = require("gulp-rename");
 var runSequence = require('run-sequence');
 var run = require('gulp-run');
 var replace = require('gulp-replace-task');
@@ -70,6 +72,36 @@ gulp.task('uglify', function () {
 
 });
 
+// handle LESS compilation
+var less = require('gulp-less');
+var LessPluginCleanCSS = require('less-plugin-clean-css');
+var LessPluginAutoPrefix = require('less-plugin-autoprefix');
+var cleancss = new LessPluginCleanCSS({ advanced: true});
+var autoprefix = new LessPluginAutoPrefix({ browsers: ["last 2 versions"] });
+
+gulp.task('concat-less', function() {
+
+  var lessStream = gulp.src(['./app/common/**/*.less', './app/pages/**/*.less', './app/components/**/*.less'])
+    .pipe(concat('app.less'))
+    .pipe(gulp.dest('./app/less'))
+
+  return lessStream;
+
+});
+
+gulp.task('render-less', function() {
+
+  var lessStream = gulp.src(['./app/less/index.less'])
+    .pipe(less({
+      plugins: [autoprefix, cleancss]
+    }))
+    .pipe(rename('app.css'))
+    .pipe(gulp.dest('./www/css'))
+
+  return lessStream;
+
+});
+
 // copy the assets to the www folder
 gulp.task('copy-assets', function() {
   return gulp.src('./app/assets/**')
@@ -122,8 +154,11 @@ gulp.task('watch-for-file-changes',  function() {
   // watch for changes to the index.html file
   gulp.watch(['./app/assets/index.html'], ['copy-html']);
 
-  // watch for changes to the app's JS or jade files
+  // watch for changes to the app's JS or Jade files
   gulp.watch(['./app/**/*.js', './app/**/*.jade'], ['build-js']);
+
+  // watch for changes to the app's LESS or CSS files
+  gulp.watch(['./app/**/*.less', './app/**/*.css'], ['build-less']);
 
   // watch for changes to the Samson.js lib files
   gulp.watch(['../../lib/**/*.js'], ['build-js']);
@@ -150,7 +185,7 @@ gulp.task('inject-html', function() {
 
 function developmentBuild(callback) {
   production = false;
-  runSequence('browserify', 'copy-assets', 'inject-html', 'start-livereload-server', 'start-cordova-server', 'watch-for-file-changes', callback);
+  runSequence('browserify', 'concat-less', 'render-less', 'copy-assets', 'inject-html', 'start-livereload-server', 'start-cordova-server', 'watch-for-file-changes', callback);
 }
 
 /***************** Gulp Tasks *********************/
@@ -161,7 +196,7 @@ gulp.task('dev', developmentBuild); // gulp dev
 // Build the app for production (uglified)
 gulp.task('prod', function(callback) {
   production = true;
-  runSequence('browserify', 'uglify', 'copy-assets', callback);
+  runSequence('browserify', 'uglify', 'concat-less', 'render-less', 'copy-assets', callback);
 });
 
 gulp.task('copy-html', function(callback) {
@@ -170,4 +205,8 @@ gulp.task('copy-html', function(callback) {
 
 gulp.task('build-js', function(callback) {
   runSequence('browserify', 'prepare-and-reload', callback);
+});
+
+gulp.task('build-less', function(callback) {
+  runSequence('concat-less', 'render-less', 'prepare-and-reload', callback);
 });

@@ -7,55 +7,6 @@ module.exports = {
 
   el: 'samson_header',
   template: require("./template.jade"),
-  style: {
-
-    "#samson_header": {
-      "position": "absolute",
-      "left": "0",
-      "right": "0",
-      "top": "0",
-      "height": header_height,
-      "z-index": 3,
-      "box-shadow": "0 0 8px rgba(0,0,0,0.3)",
-      "opacity": 1,
-      "background-color": "#000000",
-      "transition": "all 0.6s ease",
-      "Transform": "translate3d(0,-" + header_height + ",0)"
-    },
-
-    "#samson_header.show": {
-      "opacity": 1,
-      "Transform": "translate3d(0,0,0)"
-    },
-
-    "#samson_header_title": {
-      "position": "absolute",
-      "left": "50%",
-      "top": "50%",
-      "height": "40px",
-      "line-height": "40px",
-      "width": "60%",
-      "Transform": "translate(-50%,-50%)",
-      "color": "#ffffff",
-      "font-size": "3rem",
-      "text-align": "center",
-      "vertical-align": "middle"
-    },
-
-    "#samson_header_menu_button, #samson_header_back_button": {
-      "position": "absolute",
-      "left": "10px",
-      "top": "10px",
-      "height": "40px",
-      "line-height": "40px",
-      "width": "40px",
-      "color": "#ffffff",
-      "font-size": "4rem",
-      "text-align": "center",
-      "vertical-align": "middle"
-    }
-
-  },
 
   domEvents: {
 
