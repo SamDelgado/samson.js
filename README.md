@@ -40,7 +40,7 @@ App.configure(options, function() {
 ## When Shouldn't You Use It?
 
   * Your app has no concept of pages
-  * You aren making an app that you want to run on older mobile devices (anything older than iOS7 or Android 4)
+  * You are making an app that you want to run on older mobile devices (anything older than iOS7 or Android 4)
   * You want the most flexible framework possible (check out: http://backbonejs.org/)
   * You have a strong opinion about the best way to structure projects (You probably won't see eye to eye with Samson)
   * You don't enjoy using or aren't interested in learning Browserify/CommonJS

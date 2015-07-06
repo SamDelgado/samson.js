@@ -1,6 +1,7 @@
 # Custom Files #
 ################
 *.sublime-project
+*.sublime-workspace
 npm-debug.log
 node_modules
 bower_components
