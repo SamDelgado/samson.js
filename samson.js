@@ -14,12 +14,12 @@ var $ = require('./modules/quo.js');
 var async = require('async-lite');
 
 // reserved properties for the Samson.App object. all properties starting with _ are also reserved
-var reserved = ["$", "DOM", "Data", "styleSheet", "baseStyle", "style", "components", "setComponents", "Router", "Pages", "on", "emit", "off"];
+var reserved = ["$", "DOM", "Async", "Data", "styleSheet", "baseStyle", "style", "components", "setComponents", "Router", "Pages", "on", "emit", "off"];
 
 // create the Samson object that will be exported
 module.exports = Samson = {};
 
-Samson.VERSION = '0.1.6'; // keep in sync with package.json
+Samson.VERSION = '0.1.8'; // keep in sync with package.json
 
 Samson.$ = $; // attach QuoJS to Samson
 
@@ -59,6 +59,7 @@ Samson.createApp = function() {
     Samson.App = new SamsonApp();
     Samson.Events(Samson.App); // make the main app object an event bus
     Samson.App.DOM = Samson.DOM;
+    Samson.App.Data = {};
     return Samson.App;
   }
 };
@@ -76,9 +77,6 @@ SamsonApp.prototype.configure = function(options, callback) {
 
     // add QuoJS to the app object for quick access
     this.$ = $;
-
-    // setup the app's Data object
-    this.Data = options.Data || options.data || {};
 
     // setup the app's pages
     this.Pages = options.Pages || options.pages || {};
