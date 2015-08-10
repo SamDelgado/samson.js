@@ -14,12 +14,12 @@ var $ = require('./modules/quo.js');
 var async = require('async-lite');
 
 // reserved properties for the Samson.App object. all properties starting with _ are also reserved
-var reserved = ["$", "DOM", "Async", "Data", "styleSheet", "baseStyle", "style", "components", "setComponents", "Router", "Pages", "on", "emit", "off"];
+var reserved = ["$", "DOM", "Async", "Data", "styleSheet", "baseStyle", "style", "components", "setComponents", "Router", "Pages", "do", "on", "emit", "off"];
 
 // create the Samson object that will be exported
 module.exports = Samson = {};
 
-Samson.VERSION = '0.1.8'; // keep in sync with package.json
+Samson.VERSION = '0.1.9'; // keep in sync with package.json
 
 Samson.$ = $; // attach QuoJS to Samson
 
@@ -228,9 +228,9 @@ SamsonComponent.prototype._render = function(force_update, callback) {
 
   this._loadComponents(force_update, function() {
 
-    self._doFirst("beforeRender", function() {
+    self._doFirst("beforeRender", function(reset_initial_state) {
 
-      if (!self._initialStateSet) {
+      if (!self._initialStateSet || reset_initial_state) {
         self.state = self.setInitialState();
         self._initialStateSet = true;
       }
@@ -425,10 +425,10 @@ SamsonPage.prototype._render = function(force_update, page_container, callback) 
 
   this._loadComponents(force_update, function() {
 
-    self._doFirst("beforeRender", function() {
+    self._doFirst("beforeRender", function(reset_initial_state) {
 
       // create the initial state object of the page that is passed into the render call
-      if (!self._initialStateSet) {
+      if (!self._initialStateSet || reset_initial_state) {
         self.state = self.setInitialState();
         self._initialStateSet = true;
       }
@@ -504,6 +504,9 @@ function SamsonRouter(options) {
   // our page cache will store the initialized pages
   this.pageCache = {};
 
+  // if options.cache is true, then all pages will remain cached
+  this.cache = options.cache || false;
+
   // create the app router history
   this.history = [];
 
@@ -534,9 +537,10 @@ function SamsonRouter(options) {
   // set the default navigate animation
   this.navigateAnimation = options.defaultNavigateAnimation || "right";
 
-  //set the default back animation
+  // set the default back animation
   this.backAnimation = options.defaultBackAnimation || "left";
 
+  // set the router events/hooks
   this.beforeNavigate = {};
   this.afterNavigate = {};
   this.beforeAnimate = {};
@@ -545,13 +549,11 @@ function SamsonRouter(options) {
   this.beforeBack = {};
   this.afterBack = {};
 
-  if (options.beforeNavigate) { this.beforeNavigate.router = options.beforeNavigate; }
-  if (options.afterNavigate) { this.afterNavigate.router = options.afterNavigate; }
-  if (options.beforeAnimate) { this.beforeAnimate.router = options.beforeAnimate; }
-  if (options.duringAnimate) { this.duringAnimate.router = options.duringAnimate; }
-  if (options.afterAnimate) { this.afterAnimate.router = options.afterAnimate; }
-  if (options.beforeBack) { this.beforeBack.router = options.beforeBack; }
-  if (options.afterBack) { this.afterBack.router = options.afterBack; }
+  // load the default router events
+  var event;
+  for (event in options.events) {
+    this[event].router = options.events[key];
+  }
 
 };
 
@@ -688,7 +690,15 @@ SamsonRouter.prototype.doAnimation = function(animate, callback) {
 
   var animationEvent = Utils.whichAnimationEvent();
 
-  Utils.once(Samson.DOM[this.inactivePageElement], animationEvent, animationEnded);
+  // if the animation is not "none", then listen for the animation's end event
+  if (animate.next !== "none") {
+    Utils.once(Samson.DOM[this.inactivePageElement], animationEvent, animationEnded);
+  }
+
+  // otherwise run the animationEnded immediately
+  else {
+    animationEnded();
+  }
 
   // listen for the end of the animation
   function animationEnded() {
@@ -702,11 +712,13 @@ SamsonRouter.prototype.doAnimation = function(animate, callback) {
     self.pagesAnimating = false;
 
     // remove the old page including all of its views and events from the DOM
-    // also remove the entire page instance from the router's pageCache
+    // also remove the entire page instance from the router's pageCache if the cache option is false
     if (self.currentPage) {
       self.pageCache[self.currentPage]._remove(function() {
-        delete self.pageCache[self.currentPage];
+
+        if (!self.cache) delete self.pageCache[self.currentPage];
         callback();
+
       });
 
     } else {
@@ -757,12 +769,19 @@ SamsonRouter.prototype.animate = function(next_page, animation, callback) {
             // refocus the element
             setTimeout(function() {
               focusElement.focus();
+
+              // move the cursor to the end of the textarea
+              var val = focusElement.value; //store the value of the element
+              focusElement.value = ''; //clear the value of the element
+              focusElement.value = val; //set that value back.
+
             }, 0);
-            //focusElement.focus();
 
             // move the cursor to the end of the textarea
+            /* This solution isn't working with 'email' input types on Chrome
             var value_length = focusElement.value.length;
             focusElement.setSelectionRange(value_length, value_length);
+            */
 
             // remove the samson_focus class from the element
             focusElement.classList.remove("samson_focus");
@@ -823,7 +842,10 @@ SamsonRouter.prototype.navigate = function(next_page, animation, callback) {
         if (next_page === self.currentPage) {
           chosen_animation = "update";
         } else {
-          self.pageCache[next_page] = Samson.createPage(Samson.App.Pages[next_page]);
+          // if the next page isn't already cached then cache it
+          if (!self.pageCache[next_page]) {
+            self.pageCache[next_page] = Samson.createPage(Samson.App.Pages[next_page]);
+          }
         }
 
         // make the current animation accessible in getPageData()
@@ -889,8 +911,10 @@ SamsonRouter.prototype.back = function(callback) {
 
       if (!err) {
 
-        // load the previousPage into the pageCache
-        self.pageCache[self.previousPage] = Samson.createPage(Samson.App.Pages[self.previousPage]);
+        // load the previousPage into the pageCache if it isn't already
+        if (!self.pageCache[self.previousPage]) {
+          self.pageCache[self.previousPage] = Samson.createPage(Samson.App.Pages[self.previousPage]);
+        }
 
         // if the page wants a custom back animation then use it, otherwise use the default back animation
         var back_animation = Samson.App.Pages[self.currentPage].backAnimation || self.backAnimation;
@@ -968,7 +992,7 @@ function getTopParent(component) {
 }
 
 // the methods that Pages and Components share
-shared.setState = function(new_state) { // new_state must be an object
+shared.setState = function(new_state, dont_reload) { // new_state must be an object
   if (typeof new_state === "object") {
     var changed = false;
 
@@ -989,11 +1013,16 @@ shared.setState = function(new_state) { // new_state must be an object
     if (changed) {
       this._stateChanged = true;
 
-      if (!this.parent || !this.parent._type) {
-        this._render(false);
-      } else {
-        var parent = getTopParent(this);
-        parent._render(false);
+      // the page or component will reload by default unless the dont_reload is true
+      if (!dont_reload) {
+
+        if (!this.parent || !this.parent._type) {
+          this._render(false);
+        } else {
+          var parent = getTopParent(this);
+          parent._render(false);
+        }
+
       }
 
     }
@@ -1003,15 +1032,15 @@ shared.setState = function(new_state) { // new_state must be an object
   }
 };
 
-shared.resetState = function() {
+shared.resetState = function(dont_reload) {
   var new_state = this.setInitialState();
-  this.setState(new_state);
+  this.setState(new_state, dont_reload);
 };
 
-// run the named function before calling back
+// run the named function before calling back, and passthrough the first callback argument if one exists
 shared._doFirst = function(name, callback) {
-  this[name](function() {
-    callback();
+  this[name](function(callbackArg) {
+    callback(callbackArg);
   });
 };
 
