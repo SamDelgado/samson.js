@@ -19,7 +19,7 @@ var reserved = ["$", "DOM", "Async", "Data", "styleSheet", "baseStyle", "style",
 // create the Samson object that will be exported
 module.exports = Samson = {};
 
-Samson.VERSION = '0.1.11'; // keep in sync with package.json
+Samson.VERSION = '0.1.12'; // keep in sync with package.json
 
 Samson.$ = $; // attach QuoJS to Samson
 
@@ -550,6 +550,7 @@ function SamsonRouter(options) {
   this.afterBack = {};
 
   // load the default router events
+  console.log(options.events);
   var event;
   for (event in options.events) {
     console.log(options.events[key]);
