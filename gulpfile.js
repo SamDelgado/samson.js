@@ -12,8 +12,7 @@ var source = require('vinyl-source-stream');
 gulp.task('browserify', function () {
 
   var browserify_options = {
-    entries: ['./lib/index.js'],
-    standalone: 'Samson'
+    entries: ['./lib/index.js']
   };
 
   var browserifyStream = browserify(browserify_options)
