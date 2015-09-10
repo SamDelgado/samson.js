@@ -13,9 +13,9 @@ var Utils = require('./utils');
 var async = require('async-lite');
 
 // create the Samson object that will be exported
-var Samson = {};
+module.exports = Samson = {};
 
-Samson.VERSION = '0.2.0'; // keep in sync with package.json
+Samson.VERSION = '0.2.1'; // keep in sync with package.json
 
 // attach jQuery to Samson
 if ($) {
@@ -145,8 +145,6 @@ SamsonApp.prototype.configure = function(options, callback) {
 
 };
 
-module.exports = Samson;
-
 },{"./component":2,"./events":3,"./router":5,"./utils":6,"async-lite":7,"jquery":8}],2:[function(require,module,exports){
 // Samson.Component constructor function
 // Used to simplify component/page rendering and transitions in single page apps
@@ -266,10 +264,7 @@ function SamsonComponent(options) {
   this._uuid = this._name + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
   this._router = options.Router || options.router || {};
 
-  var router_task;
-  for (router_task in this._router) {
-    Samson.App.Router[router_task][this._uuid] = this._router[router_task].bind(this);
-  }
+  Utils.loadRouterEvents(this);
 
   // add any unreserved properties passed into the custom or extend object
   var custom = options.extend || options.custom || {};
@@ -1159,6 +1154,8 @@ module.exports = SamsonRouter;
 },{"../index":undefined,"../utils":6,"./base_router_animations":4,"async-lite":7}],6:[function(require,module,exports){
 // Utility functions
 
+var Samson = require('./index');
+
 var utils = {};
 
 // add any unreserved properties to the passed in object
@@ -1223,9 +1220,18 @@ utils.once = function(element, type, callback) {
 
 };
 
+utils.loadRouterEvents = function(component) {
+
+  var router_task;
+  for (router_task in component._router) {
+    Samson.App.Router[router_task][component._uuid] = component._router[router_task].bind(component);
+  }
+
+};
+
 module.exports = utils;
 
-},{}],7:[function(require,module,exports){
+},{"./index":undefined}],7:[function(require,module,exports){
 (function (global){
 // Tiny Async library for use in modern environments
 
