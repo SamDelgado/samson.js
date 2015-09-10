@@ -16,7 +16,7 @@ gulp.task('browserify', function () {
   };
 
   var browserifyStream = browserify(browserify_options)
-    //.ignore('jquery')
+    .ignore('jquery')
     .bundle()
     .pipe(source('samson.js'))
     .pipe(gulp.dest("./"))
