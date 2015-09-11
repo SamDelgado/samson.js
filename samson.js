@@ -8,7 +8,7 @@
 // create the Samson object that will be exported
 module.exports = Samson = {};
 
-Samson.VERSION = '0.2.6'; // keep in sync with package.json
+Samson.VERSION = '0.2.7'; // keep in sync with package.json
 
 // attach jQuery to Samson
 if ($ || jQuery) {
@@ -429,6 +429,8 @@ SamsonComponent.prototype._loadEvents = function(callback) {
 
     var delegate = getTopParent(this).delegate;
 
+    console.log(delegate);
+
     var keys = Object.keys(this.domEvents);
 
     var selector_element = (this.isPage) ? null : "#" +  this.el;
@@ -476,6 +478,7 @@ SamsonComponent.prototype._destroyEvents = function(callback) {
 
   // destroy DOM event listeners
   var delegate = getTopParent(this).delegate;
+
   var i; var domEvent;
   for (i=0; i<this._loadedEvents.length;i++) {
     domEvent = this._loadedEvents[i];
@@ -1217,8 +1220,6 @@ utils.once = function(element, type, callback) {
 };
 
 utils.loadRouterEvents = function(component) {
-
-  console.log(component);
 
   var router_task;
   for (router_task in component._router) {
