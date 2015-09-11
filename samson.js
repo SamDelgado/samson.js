@@ -8,7 +8,7 @@
 // create the Samson object that will be exported
 module.exports = Samson = {};
 
-Samson.VERSION = '0.2.9'; // keep in sync with package.json
+Samson.VERSION = '0.2.10'; // keep in sync with package.json
 
 // attach jQuery to Samson
 if ($ || jQuery) {
@@ -428,8 +428,6 @@ SamsonComponent.prototype._loadEvents = function(callback) {
   if (!this._loadedEvents.length) {
 
     var delegate = getTopParent(this).delegate;
-
-    console.log(delegate);
 
     var keys = Object.keys(this.domEvents);
 
