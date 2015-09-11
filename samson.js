@@ -5,17 +5,10 @@
  * MIT Licensed
  */
 
-/**
- * Module dependencies
- */
-
-var Utils = require('./utils');
-var async = require('async-lite');
-
 // create the Samson object that will be exported
 module.exports = Samson = {};
 
-Samson.VERSION = '0.2.5'; // keep in sync with package.json
+Samson.VERSION = '0.2.6'; // keep in sync with package.json
 
 // attach jQuery to Samson
 if ($ || jQuery) {
@@ -45,7 +38,7 @@ Samson.createComponent = function(options, add_events) {
   return component;
 };
 
-// Samson.DOM will cache references to any Samson created DOM elements like #samson-app
+// Samson.DOM will cache references to any Samson created DOM elements like #samson_app
 Samson.DOM = {};
 
 // the instantiated app will be attached to Samson.App for quick access
@@ -71,6 +64,9 @@ function SamsonApp() {
 
 // reserved properties for the Samson.App object. all properties starting with _ are also reserved
 var reserved_props = ["$", "DOM", "Async", "Data", "styleSheet", "baseStyle", "style", "components", "setComponents", "Router", "Pages", "do", "on", "emit", "off"];
+
+var Utils = require('./utils');
+var async = require('async-lite');
 
 SamsonApp.prototype.configure = function(options, callback) {
 
