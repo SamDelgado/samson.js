@@ -3,7 +3,7 @@
 [![Build Status via Travis CI](https://travis-ci.org/SamDelgado/samson.js.svg?branch=master)](https://travis-ci.org/SamDelgado/samson.js)
 [![NPM version](http://img.shields.io/npm/v/samson.js.svg)](https://www.npmjs.org/package/samson.js)
 
-A performant and easy to learn mobile app framework that will allow you to rapidly build native-like apps that target modern devices (iOS 7+ / Android 4+). Used with Browserify, Samson is a great foundation for your next Cordova/Phonegap app. A specific project structure is recommended for maximum productivity. Full app examples can be found in the examples folder.
+A performant and easy to learn mobile app framework that will allow you to rapidly build native-like apps that target modern devices (iOS 8+ / Android 4+). Used with Browserify, Samson is a great foundation for your next Cordova/Phonegap app. Samson uses the 'jquery' and 'jquery-touch-events' npm libraries for perfect touch functionality right out of the box. A specific project structure is recommended for maximum productivity. Full app examples can be found in the examples folder.
 
 ## Disclaimer
 
@@ -17,14 +17,13 @@ $ npm install samson.js
 
 ```js
 var Samson = require('samson.js');
-var App = Samson.createApp();
-var options = {};
+var Config = {}; // Samson config data goes here
 
-App.configure(options, function() {
+Samson.createApp(Config, function() {
 
-  // The App is initialized
+  // App is now initialized and global by default
   console.log("Showtime!");
-
+  
 });
 ```
 ## When Should You Use It?
@@ -40,7 +39,7 @@ App.configure(options, function() {
 ## When Shouldn't You Use It?
 
   * Your app has no concept of pages
-  * You are making an app that you want to run on older mobile devices (anything older than iOS7 or Android 4)
+  * You are making an app that you want to run on older mobile devices (anything older than iOS 8 or Android 4)
   * You want the most flexible framework possible (check out: http://backbonejs.org/)
   * You have a strong opinion about the best way to structure projects (You probably won't see eye to eye with Samson)
   * You don't enjoy using or aren't interested in learning Browserify/CommonJS
@@ -65,5 +64,3 @@ App.configure(options, function() {
   * Refactor any confusing code
 
 ## Getting Started
-
-
