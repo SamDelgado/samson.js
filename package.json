@@ -2,7 +2,7 @@
   "name": "samson.js",
   "description": "A performant and easy to learn mobile app framework that will allow you to rapidly build native-like apps that target modern devices (iOS 8+ / Android 4+)",
   "author": "Sam Delgado <sam@samdelgado.com>",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
