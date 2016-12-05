@@ -2,7 +2,7 @@
   "name": "samson.js",
   "description": "A performant and easy to learn mobile app framework that will allow you to rapidly build native-like apps that target modern devices (iOS 8+ / Android 4+)",
   "author": "Sam Delgado <sam@samdelgado.com>",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
@@ -32,7 +32,7 @@
     "async-lite": "1.0.3",
     "lodash.isequal": "4.4.0",
     "jquery": "3.1.1",
-    "jquery-touch-events": "1.0.6"
+    "jquery-touch-events": "1.0.7"
   },
   "devDependencies": {
     "mocha": "2.2.5",

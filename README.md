@@ -16,14 +16,14 @@ $ npm install samson.js
 ```
 
 ```js
-var Samson = require('samson.js');
+var Samson = require('samson.js')(false); // pass true when requiring Samson to make the 'App' object global by default
 var Config = {}; // Samson config data goes here
 
-Samson.createApp(Config, function() {
+Samson.createApp(Config, function(app) { // if you passed true when requiring Samson then the app object will not be passed back in this callback since it is already global
 
-  // App is now initialized and global by default
-  console.log("Showtime!");
-  
+  // app is now initialized
+  console.log(app);
+
 });
 ```
 ## When Should You Use It?
