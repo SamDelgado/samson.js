@@ -46,6 +46,7 @@
     "LICENSE",
     "README.md",
     "index.js",
+    "samson_setup.js",
     "samson.min.css",
     "lib/"
   ]
