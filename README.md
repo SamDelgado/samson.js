@@ -16,12 +16,15 @@ $ npm install samson.js
 ```
 
 ```js
-var Samson = require('samson.js')(false); // pass true when requiring Samson to make the 'App' object global by default
-var Config = {}; // Samson config data goes here
+var Samson = require('samson.js')
 
-Samson.createApp(Config, function(app) { // if you passed true when requiring Samson then the app object will not be passed back in this callback since it is already global
+// Samson automatically bundles your config data, pages, components, controllers, and modules when creating the app object
+// This allows you to simply put your files in the right folders without worrying about linking everything up
+
+Samson.createApp(function(app) {
 
   // app is now initialized
+  global.App = app;
   console.log(app);
 
 });
