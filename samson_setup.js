@@ -1,11 +1,11 @@
 
 module.exports = {
 
-  Components: makeFileTree(require('../app/js/components/**/*.js',  {mode: 'hash'})),
-  Config: makeFileTree(require('../app/js/config/**/*.js',  {mode: 'hash'})),
-  Controllers: makeFileTree(require('../app/js/controllers/**/*.js',  {mode: 'hash'})),
-  Modules: makeFileTree(require('../app/js/modules/**/*.js',  {mode: 'hash'})),
-  Pages: makeFileTree(require('../app/js/pages/**/*.js',  {mode: 'hash'}))
+  Components: makeFileTree(require('../../app/js/components/**/*.js',  {mode: 'hash'})),
+  Config: makeFileTree(require('../../app/js/config/**/*.js',  {mode: 'hash'})),
+  Controllers: makeFileTree(require('../../app/js/controllers/**/*.js',  {mode: 'hash'})),
+  Modules: makeFileTree(require('../../app/js/modules/**/*.js',  {mode: 'hash'})),
+  Pages: makeFileTree(require('../../app/js/pages/**/*.js',  {mode: 'hash'}))
 
 };
 
