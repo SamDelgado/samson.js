@@ -4,9 +4,29 @@
 
 A performant and easy to learn JavaScript framework that will allow you to rapidly build apps targeted for modern browsers.
 
+## Installation and Usage
+
+```bash
+$ npm install samson.js
+```
+
+### CommonJS or ES6
+```js
+var Samson = require('samson.js');
+var SamsonAppConfig = require('./config');
+/*          or          */
+import Samson from 'samson.js';
+import { SamsonAppConfig } from './config';
+
+var App = Samson.createApp(SamsonAppConfig);
+
+global.App = App; // Make 'App' global for quick access in all of your files
+
+App.launch(); // The app is now launched
+```
+
 ## Getting Started
 
-  * [Using Samson.js](docs/usingSamson.md)
   * [Components](docs/components.md)
   * [Pages](docs/pages.md)
   * [Router](docs/router.md)
