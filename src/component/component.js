@@ -7,6 +7,7 @@
   template: Function, // default = undefined - example = require("./template.pug")
   components: Object, // default = undefined - an object storing any subcomponents that will load with this component
   events: Object, // default = undefined - an object storing any dom or app event listeners that need to be attached to the component
+  state: Object, // default = {} - an object storing the state of the component. if this is specified then setInitialState will be ignored
   setInitialState: Function, // default = undefined - a function that returns an object with the component's initial state
   beforeRender: Function, // default = undefined - a function that runs before the component is rendered (update models, sort collections)
   afterRender: Function, // default = undefined - a function that runs after the component is rendered (scroll to the top of the page, marked checkboxes as checked)
@@ -27,6 +28,8 @@
   onVisible: Function // default = undefined - a function that runs after the Page has fully animated onto the screen
 */
 
+import { SamsonApp } from '../index.js';
+
 /* Utility Functions */
 import makeObjectAnEventBus from '../utils/makeObjectAnEventBus.js';
 import loadRouterEvents from '../utils/loadRouterEvents.js';
@@ -40,6 +43,8 @@ import fixAutoFocusElements from './fixAutoFocusElements.js';
 import render from './render.js';
 import setState from './setState.js';
 import resetState from './resetState.js';
+import clearState from './clearState.js';
+import forceUpdate from './forceUpdate.js';
 import doFirst from './doFirst.js';
 import loadEvents from './loadEvents.js';
 import destroyEvents from './destroyEvents.js';
@@ -104,51 +109,50 @@ export default function SamsonComponent(options, add_events) {
   this._loadedAppEvents = [];
   this._loadedDOMEvents = [];
 
-  var event_keys = Object.keys(this.events);
+  Object.keys(this.events).forEach(function(event_key) {
 
-  if (event_keys.length) {
+    var event = {};
 
-    event_keys.forEach(function(event_key) {
+    // check to see if the event is an AppEvent or DOMEvent
+    if (event_key.charAt(0) === '@') { // app event because it start with the '@' symbol
 
-      var event = {};
+      event.type = event_key.slice(1);
+      event.handler = self.events[event_key];
 
-      // check to see if the event is an AppEvent or DOMEvent
-      if (event_key.charAt(0) === '@') { // app event because it start with the '@' symbol
+      self.AppEvents.push(event);
 
-        event.type = event_key.slice(1);
-        event.handler = self.events[event_key];
+    } else {
 
-        self.AppEvents.push(event);
+      // it is a DOMEvent so let's extract the event type and selector
+      var split_event = event_key.split(" ");
+      event.type = split_event.shift();
+      event.selector = split_event.length > 1 ? split_event.join(" ") : split_event[0];
+      if (!event.selector) event.selector = (self.isPage === true) ? false : "#" +  self.el;
 
-      } else {
+      event.handler = function eventHandler(e) { // we inject the current component as 'this' in the event's handler
+        self.events[event_key].call(self, e, this);
+      };
 
-        // it is a DOMEvent so let's extract the event type and selector
-        var split_event = event_key.split(" ");
-        event.type = split_event.shift();
-        event.selector = split_event.length > 1 ? split_event.join(" ") : split_event[0];
-        if (!event.selector) event.selector = (self.isPage === true) ? false : "#" +  self.el;
+      event.onCapture = ON_CAPTURE_EVENTS.indexOf(event.type) !== -1; // determine if the event should listen to the capturing or bubbling phase
 
-        event.handler = function eventHandler(e) { // we inject the current component as 'this' in the event's handler
-          self.events[event_key].call(self, e, this);
-        };
+      self.DOMEvents.push(event);
 
-        event.onCapture = ON_CAPTURE_EVENTS.indexOf(event.type) !== -1; // determine if the event should listen to the capturing or bubbling phase
+    }
 
-        self.DOMEvents.push(event);
-
-      }
-
-    });
-
-  }
+  });
 
   // subcomponents
   this._components = options.components || {};
   this._componentsLoaded = false;
   this.Components = {};
 
-  // setInitialState function
-  this.setInitialState = options.setInitialState || justReturnObject;
+  // state and setInitialState function
+  var state = options.state;
+  if (typeof state === 'object') {
+    this.setInitialState = function() { return state };
+  } else {
+    this.setInitialState = options.setInitialState || justReturnObject;
+  }
   this.state = {};
   this._initialStateSet = false;
   this._stateChanged = false;
@@ -157,6 +161,10 @@ export default function SamsonComponent(options, add_events) {
   // set the component's render function that will output an html string
   // if no render function was passed in, we check for a template function
   this._template = options.render || options.template;
+
+  // Create the templateData object that will contain the entire App object and this Component's instance as 'this'
+  // This templateData will be passed into the template/render function
+  this._templateData = { App: SamsonApp, this: self };
 
   // set the beforeRender function if one is specified
   this.beforeRender = options.beforeRender || justCallback;
@@ -190,6 +198,8 @@ SamsonComponent.prototype._fixAutoFocusElements = fixAutoFocusElements; // remov
 SamsonComponent.prototype._render = render; // render the component to the DOM
 SamsonComponent.prototype.setState = setState;
 SamsonComponent.prototype.resetState = resetState;
+SamsonComponent.prototype.clearState = clearState;
+SamsonComponent.prototype.forceUpdate = forceUpdate;
 SamsonComponent.prototype._doFirst = doFirst; // run the named function before calling back, and passthrough the first callback argument if one exists
 SamsonComponent.prototype._loadEvents = loadEvents;
 SamsonComponent.prototype._destroyEvents = destroyEvents;

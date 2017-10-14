@@ -21,10 +21,9 @@ export default function remove(callback) {
         delete self.element;
 
         // remove any router related tasks
-        var router_event;
-        for (router_event in self._routerEvents) {
+        Object.keys(self._routerEvents).forEach(function(router_event) {
           delete SamsonApp.Router[router_event][self._uuid];
-        }
+        });
 
         // remove the event delegator if it exists
         delete self.delegate;

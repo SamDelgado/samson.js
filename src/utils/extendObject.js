@@ -7,10 +7,13 @@ function startsWith_(word) {
 }
 
 export default function extendObject(obj, custom_props, reserved) {
-  var key;
-  for (key in custom_props) {
-    if (!startsWith_(key) && reserved.indexOf(key) === -1) {
-      obj[key] = custom_props[key];
+
+  Object.keys(custom_props).forEach(function(prop) {
+    
+    if (!startsWith_(prop) && reserved.indexOf(prop) === -1) {
+      obj[prop] = custom_props[prop];
     }
-  }
+
+  });
+
 };

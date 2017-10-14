@@ -41,6 +41,7 @@ export default function doAnimation(animate, callback) {
     // remove the old page including all of its views and events from the DOM
     // also remove the entire page instance from the router's pageCache if the cache option is false
     if (self.currentPage) {
+
       self.pageCache[self.currentPage]._remove(function() {
 
         if (!self.cache) delete self.pageCache[self.currentPage];
@@ -49,7 +50,9 @@ export default function doAnimation(animate, callback) {
       });
 
     } else {
+
       callback();
+      
     }
 
   }
