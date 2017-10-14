@@ -2,10 +2,11 @@
   "name": "samson.js",
   "description": "A performant and easy to learn mobile app framework that will allow you to rapidly build native-like apps that target modern devices (iOS 8+ / Android 4+)",
   "author": "Sam Delgado <sam@samdelgado.com>",
-  "version": "0.5.6",
-  "main": "index.js",
+  "version": "0.6.0",
+  "main": "dist/samson.js",
+  "module": "index.js",
   "scripts": {
-    "test": "mocha"
+    "build": "webpack"
   },
   "keywords": [
     "samson",
@@ -30,24 +31,20 @@
   "license": "MIT",
   "dependencies": {
     "async-lite": "1.0.3",
-    "gator": "1.2.4"
+    "gator": "1.2.4",
+    "include-all": "4.0.3"
   },
   "devDependencies": {
-    "mocha": "2.2.5",
-    "expect.js": "0.3.1",
-    "gulp": "~3.9.0",
-    "gulp-rename": "~1.2.0",
-    "vinyl-source-stream": "~1.0.0",
-    "gulp-less": "~3.0.3",
-    "less-plugin-autoprefix": "~1.4.2",
-    "less-plugin-clean-css": "~1.5.0"
+    "uglifyjs-webpack-plugin": "^0.4.6",
+    "webpack": "3.6.0"
   },
   "files": [
     "LICENSE",
     "README.md",
-    "index.js",
-    "samson_setup.js",
     "samson.min.css",
-    "lib/"
+    "dist/",
+    "src/",
+    "components/",
+    "index.js"
   ]
 }
