@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <meta charset="UTF-8">
+
+        <title>Example Samson App</title>
+
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com http://* https://* 'unsafe-inline' 'unsafe-eval'; style-src 'self'; media-src *; img-src 'self' data: content:;">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <!-- cordova.js required for cordova apps -->
+        <script src="cordova.js"></script>
+
+        <!-- CSS Files -->
+        <link rel="stylesheet" type="text/css" href="build/main.css">
+
+    </head>
+    <body>
+
+        <!-- The Samson App's root component-->
+        <div id='App'>
+            <div id='Pages'>
+                <div id='Page_1' class='Page active'></div>
+                <div id='Page_2' class='Page'></div>
+            </div>
+        </div>
+
+        <!-- JS Files -->
+        <script type="text/javascript" charset="utf-8" src="build/main.js"></script>
+
+    </body>
+</html>

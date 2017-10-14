@@ -1,1 +1,2 @@
-module.exports = require('./lib/index.js');
+
+module.exports = require('./src/index').Samson;
