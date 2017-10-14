@@ -11,7 +11,7 @@ import extendObject from '../utils/extendObject.js';
 
 import { justCallback } from '../utils/functions.js';
 
-// import createSamsonDOMElements from './createSamsonDOMElements.js';
+import cacheSamsonDOMElements from './cacheSamsonDOMElements.js';
 
 import launchSamsonApp from './launchSamsonApp.js';
 
@@ -32,6 +32,7 @@ export default function createBaseSamsonAppObject(SamsonAppBundle) {
 
   // setup the app's DOM Element cache
   SamsonApp.DOM = {};
+  cacheSamsonDOMElements();
 
   // setup the app's data cache
   SamsonApp.Data = SamsonAppBundle.Data || {};
@@ -48,9 +49,6 @@ export default function createBaseSamsonAppObject(SamsonAppBundle) {
   // setup the app's base components
   SamsonApp._components = SamsonAppBundle.Components || {};
   SamsonApp.Components = {};
-
-  /* First setup the required DOM elements and components of a Samson App */
-  //createSamsonDOMElements();
 
   // setup the app's router after loading any extra components
   SamsonApp.Router = new SamsonRouter(SamsonAppBundle.Router || {});

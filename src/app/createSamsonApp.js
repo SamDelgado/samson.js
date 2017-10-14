@@ -35,7 +35,7 @@ export default function createSamsonApp(SamsonAppBundle) {
 
       // the Samson App is now created
       this._APP_CREATED_ = true;
-      
+           
       this.App.DEBUG && this.App.log("The Samson App is now created");
 
       return this.App;
