@@ -85,10 +85,9 @@ export default function launchSamsonApp(launchTasks) {
   var beforeLaunchTasks = launchTasks.before || [];
 
   var duringLaunchTasks = launchTasks.during || [];
-  duringLaunchTasks.push(loadComponents);
+  duringLaunchTasks.push(configureModules, loadComponents);
 
   var afterLaunchTasks = launchTasks.after || [];
-  afterLaunchTasks.push(configureModules);
 
   return function launch() {
 
