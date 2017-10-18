@@ -62,13 +62,15 @@ export default function launchSamsonApp(launchTasks) {
   }
 
   function configureModules(callback) {
-
+    
     SamsonApp.DEBUG && SamsonApp.log('Configuring all modules');
 
-    // configure any of the app's modules that require configuration
-    Async.each(Object.keys(SamsonApp.Modules), function(module, cb) {
+    var Modules = SamsonApp.Modules;
 
-      if (module.configure) module.configure();
+    // configure any of the app's modules that require configuration
+    Async.each(Object.keys(Modules), function(module, cb) {
+
+      if (Modules[module].configure) Modules[module].configure();
       cb();
 
     }, function() {
