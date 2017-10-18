@@ -2,16 +2,13 @@
 
 export default function listenOnce(element, type, callback) {
 
-  function wrapper(e) {
-
-    // remove event
-    e.target.removeEventListener(e.type, wrapper);
-
-    return callback(e);
-
-  }
-
   // create event
-  element.addEventListener(type, wrapper);
+  element.addEventListener(type, function handler(e) {
+    // remove event
+    element.removeEventListener(type, handler);
+    // call handler
+    return callback();
+    
+  });
 
 }
