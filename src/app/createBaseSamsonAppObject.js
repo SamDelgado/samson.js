@@ -8,6 +8,7 @@ import SamsonRouter from '../router/router.js';
 import addCustomLogging from '../utils/addCustomLogging.js';
 import makeObjectAnEventBus from '../utils/makeObjectAnEventBus.js';
 import extendObject from '../utils/extendObject.js';
+import { LocalStorage } from '../utils/localStorage.js';
 
 import { justCallback } from '../utils/functions.js';
 
@@ -29,6 +30,9 @@ export default function createBaseSamsonAppObject(SamsonAppBundle) {
 
   // Add custom logging to the Samson App if in DEBUG mode
   SamsonApp.log = addCustomLogging(SamsonApp.Name, SamsonApp.DEBUG);
+
+  // Add the localStorage module to the Samson App object
+  SamsonApp.DB = LocalStorage;
 
   // setup the app's DOM Element cache
   SamsonApp.DOM = {};
