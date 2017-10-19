@@ -21,6 +21,7 @@
 /* Optional Page Settings
   isPage: Boolean, // default = undefined - true if this Component is a whole page of the app
   path: String, // default = undefined - the router path of the page
+  title" String, // default = this.path - title is the displayName for the page... if one isn't provided it defaults to the value of the page's path
   childOf: String, // default = false - an optional parent page that is the start of a specific category - ex: User Bio Page is a childOf of Profile Page
   previousPage: String, // default = false - an optional previous page to make going back easier. the default is the childOf property if specified
   isBackSafe: Boolean, // default = false - set to true if it is safe to go back to this page from any other page in the app. For example, the Login page would be false after a user logs in.
@@ -72,6 +73,9 @@ export default function SamsonComponent(options, add_events) {
 
     // set the path of the page
     this.path = options.path;
+
+    // set the title of the page. it is the path of the page by default
+    this.title = options.title || this.path;
 
     // childOf is false if it is a top-level page, otherwise it is the name of the top-level page it is linked to
     this.childOf = options.childOf || false;
