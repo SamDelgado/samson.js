@@ -32,7 +32,7 @@ export default function createBaseSamsonAppObject(SamsonAppBundle) {
   SamsonApp.log = addCustomLogging(SamsonApp.Name, SamsonApp.DEBUG);
 
   // Add the localStorage module to the Samson App object
-  SamsonApp.DB = LocalStorage;
+  SamsonApp.Storage = LocalStorage;
 
   // setup the app's DOM Element cache
   SamsonApp.DOM = {};
@@ -51,14 +51,14 @@ export default function createBaseSamsonAppObject(SamsonAppBundle) {
   SamsonApp.Pages = SamsonAppBundle.Pages || {};
 
   // setup the app's base components
-  SamsonApp._components = SamsonAppBundle.Components || {};
+  SamsonApp.__components = SamsonAppBundle.Components || {};
   SamsonApp.Components = {};
 
   // setup the app's router after loading any extra components
   SamsonApp.Router = new SamsonRouter(SamsonAppBundle.Router || {});
 
-  // add any unreserved properties to the app object that were passed into the Extend property of the SamsonAppBundle
-  if (typeof SamsonAppBundle.Extend === 'object') extendObject(SamsonApp, SamsonAppBundle.Extend, RESERVED_PROPS);
+  // attach any unreserved properties from the SamsonAppBundle object to the App object
+  extendObject(SamsonApp, SamsonAppBundle, RESERVED_PROPS);
 
   // setup the Samson App delegate for DOM event listeners
   SamsonApp.delegate = Gator(SamsonApp.DOM.App);

@@ -14,7 +14,7 @@ export default function updateHistory(kind, message) {
 
     history_object.kind = kind;
     history_object.page = this.nextPage;
-    this.history.push(history_object);
+    this.History.push(history_object);
 
     // check if the currentPage is safe to go back to from anywhere
     var back_safe = this.currentPage ? SamsonApp.Pages[this.currentPage].isBackSafe : false;
@@ -30,7 +30,7 @@ export default function updateHistory(kind, message) {
 
     history_object.kind = kind;
     history_object.page = this.previousPage;
-    this.history.push(history_object);
+    this.History.push(history_object);
 
     // we are going back, so set our currentPage as our previousPage
     this.currentPage = this.previousPage;
@@ -44,15 +44,15 @@ export default function updateHistory(kind, message) {
 
   // if it wasn't just a page update, then switch the activePageElement and inactivePageElement values
   if (kind !== "update" && kind !== "failed") {
-    var new_active_page = this.inactivePageElement;
-    this.inactivePageElement = this.activePageElement;
-    this.activePageElement = new_active_page;
+    var new_active_page = this.inactivePage;
+    this.inactivePage = this.activePage;
+    this.activePage = new_active_page;
   }
 
   this.nextPage = false;
 
   // check to see if there is another router event in the queue
-  var queue_event = this.queue.shift();
+  var queue_event = this.Queue.shift();
   if (queue_event) {
 
     if (queue_event.kind === "navigate") {

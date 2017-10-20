@@ -24,7 +24,7 @@ function getSamsonAppBundle(SamsonAppBundle) {
 export default function createSamsonApp(SamsonAppBundle) {
 
   // make sure a Samson App hasn't already been created
-  if (!this._APP_CREATED_) {
+  if (!this.APP_CREATED) {
 
     var FoundSamsonAppBundle = getSamsonAppBundle(SamsonAppBundle);
 
@@ -34,7 +34,7 @@ export default function createSamsonApp(SamsonAppBundle) {
       createBaseSamsonAppObject(FoundSamsonAppBundle);
 
       // the Samson App is now created
-      this._APP_CREATED_ = true;
+      this.APP_CREATED = true;
            
       this.App.DEBUG && this.App.log("The Samson App is now created");
 

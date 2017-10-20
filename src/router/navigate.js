@@ -9,14 +9,14 @@ export default function navigate(next_page, animation, callback) {
   // check to see if another Router event is already being handled, if one is then add this event to a queue
   if (this.isBusy) {
 
-    this.queue.push({
+    this.Queue.push({
       kind: "navigate",
       next_page: next_page,
       animation: animation,
       callback: callback
     });
 
-    SamsonApp.DEBUG && SamsonApp.log('The Samson Router is busy. This event is #' + self.queue.length + ' in line');
+    SamsonApp.DEBUG && SamsonApp.log('The Samson Router is busy. This event is #' + self.Queue.length + ' in line');
 
   } else {
 
@@ -32,7 +32,7 @@ export default function navigate(next_page, animation, callback) {
     this.nextPage = next_page;
 
     // run any necessary tasks before we start the page transition
-    this._doFirst("beforeNavigate", function(err) {
+    this.__doFirst("beforeNavigate", function(err) {
 
       // make sure the page exists before trying to navigate
       if (!SamsonApp.Pages[next_page] && !err) {
@@ -46,8 +46,8 @@ export default function navigate(next_page, animation, callback) {
           chosen_animation = "update";
         } else {
           // if the next page isn't already cached then cache it
-          if (!self.pageCache[next_page]) {
-            self.pageCache[next_page] = new SamsonComponent(SamsonApp.Pages[next_page], false);
+          if (!self.Cache[next_page]) {
+            self.Cache[next_page] = new SamsonComponent(SamsonApp.Pages[next_page], false);
           }
         }
 
@@ -55,27 +55,27 @@ export default function navigate(next_page, animation, callback) {
         self.currentAnimation = chosen_animation;
 
         // animate the page transition
-        self.animate(next_page, chosen_animation, function() {
+        self.__animate(next_page, chosen_animation, function() {
 
           // run any necessary tasks after the page transition - no callback is required on these
-          self._doFirstNoCallback("afterAnimate");
+          self.__doFirstNoCallback("afterAnimate");
 
           // update the changes to the page history
           if (chosen_animation === "update") {
-            self.updateHistory("update");
+            self.__updateHistory("update");
           } else {
-            self.updateHistory("navigate");
+            self.__updateHistory("navigate");
           }
 
           // run any necessary tasks after navigating
-          self._doFirst("afterNavigate", function(err) {
+          self.__doFirst("afterNavigate", function(err) {
             if (callback) callback();
           });
 
         });
 
       } else {
-        self.updateHistory("failed", err);
+        self.__updateHistory("failed", err);
       }
 
     });

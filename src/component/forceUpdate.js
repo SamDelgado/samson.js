@@ -1,6 +1,6 @@
 
 export default function forceUpdate() {
 
-  this._render(true);
+  this.__render(true);
 
 }

@@ -90,7 +90,7 @@ export default function SamsonComponent(options, add_events) {
     this.isBackSafe = options.isBackSafe || true; // Page's are back safe by default
 
     // set the element's selector that will determine where the component is rendered
-    this._name = this.path;
+    this.__name = this.path;
 
     // set the onVisible function if one is specified - it is fired after the page has animated onto the screen
     this.onVisible = options.onVisible || emptyFunction; // there is no callback needed
@@ -98,20 +98,20 @@ export default function SamsonComponent(options, add_events) {
   } else {
 
     // set the element's selector that will determine where the component is rendered
-    this.el = (options.el.charAt(0) === "#") ? options.el.slice(1) : options.el;
-    this._name = this.el;
+    this.el = (options.el.charAt(0) === '#') ? options.el.slice(1) : options.el;
+    this.__name = this.el;
 
     // set the element's tag
-    this.tag = options.tag || "div";
+    this.tag = options.tag || 'div';
 
   }
 
   // set the component event listeners if they are specified
   this.events = options.events || {};
-  this.AppEvents = [];
-  this.DOMEvents = [];
-  this._loadedAppEvents = [];
-  this._loadedDOMEvents = [];
+  this.__AppEvents = [];
+  this.__DOMEvents = [];
+  this.__loadedAppEvents = [];
+  this.__loadedDOMEvents = [];
 
   Object.keys(this.events).forEach(function(event_key) {
 
@@ -123,7 +123,7 @@ export default function SamsonComponent(options, add_events) {
       event.type = event_key.slice(1);
       event.handler = self.events[event_key];
 
-      self.AppEvents.push(event);
+      self.__AppEvents.push(event);
 
     } else {
 
@@ -139,15 +139,15 @@ export default function SamsonComponent(options, add_events) {
 
       event.onCapture = ON_CAPTURE_EVENTS.indexOf(event.type) !== -1; // determine if the event should listen to the capturing or bubbling phase
 
-      self.DOMEvents.push(event);
+      self.__DOMEvents.push(event);
 
     }
 
   });
 
   // subcomponents
-  this._components = options.components || {};
-  this._componentsLoaded = false;
+  this.__components = options.components || {};
+  this.__componentsLoaded = false;
   this.Components = {};
 
   // state and setInitialState function
@@ -158,17 +158,17 @@ export default function SamsonComponent(options, add_events) {
     this.setInitialState = options.setInitialState || justReturnObject;
   }
   this.state = {};
-  this._initialStateSet = false;
-  this._stateChanged = false;
-  this._loaded = false; // becomes true once the component has been rendered for the first time
+  this.__initialStateSet = false;
+  this.__stateChanged = false;
+  this.__loaded = false; // becomes true once the component has been rendered for the first time
 
   // set the component's render function that will output an html string
   // if no render function was passed in, we check for a template function
-  this._template = options.render || options.template;
+  this.__template = options.render || options.template;
 
   // Create the templateData object that will contain the entire App object and this Component's instance as 'this'
   // This templateData will be passed into the template/render function
-  this._templateData = { App: SamsonApp, this: self };
+  this.__templateData = { App: SamsonApp, this: self };
 
   // set the beforeRender function if one is specified
   this.beforeRender = options.beforeRender || justCallback;
@@ -186,28 +186,27 @@ export default function SamsonComponent(options, add_events) {
   this.afterRemove = options.afterRemove || justCallback;
 
   // add any router related tasks
-  this._uuid = this._name + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
-  this._routerEvents = options.Router || options.router || {};
+  this.__uuid = this._name + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
+  this.__routerEvents = options.Router || options.router || {};
 
   loadRouterEvents(this);
 
-  // add any unreserved properties passed into the custom or extend object
-  var custom = options.extend || options.custom || {};
-  extendObject(this, custom, RESERVED_PROPS);
+  // attach any unreserved properties from the Component options object to the Component instance
+  extendObject(this, options, RESERVED_PROPS);
 
 }
 
-SamsonComponent.prototype._type = "Component";
-SamsonComponent.prototype._fixAutoFocusElements = fixAutoFocusElements; // remove the autofocus attribute on the first element that has it and to it the class "SF". remove the autofocus attribute entirely on any other elements that might have it by mistake. This is necessary to have smooth page transitions due to an animation bug in chrome caused by an element having the autofocus attribute. The Samson Router will call .focus() on whatever element has the "SF" class, after the page transition is complete
-SamsonComponent.prototype._render = render; // render the component to the DOM
+SamsonComponent.prototype.__type = "Component";
+SamsonComponent.prototype.__fixAutoFocusElements = fixAutoFocusElements; // remove the autofocus attribute on the first element that has it and to it the class "SF". remove the autofocus attribute entirely on any other elements that might have it by mistake. This is necessary to have smooth page transitions due to an animation bug in chrome caused by an element having the autofocus attribute. The Samson Router will call .focus() on whatever element has the "SF" class, after the page transition is complete
+SamsonComponent.prototype.__render = render; // render the component to the DOM
 SamsonComponent.prototype.setState = setState;
 SamsonComponent.prototype.resetState = resetState;
 SamsonComponent.prototype.clearState = clearState;
 SamsonComponent.prototype.forceUpdate = forceUpdate;
-SamsonComponent.prototype._doFirst = doFirst; // run the named function before calling back, and passthrough the first callback argument if one exists
-SamsonComponent.prototype._loadEvents = loadEvents;
-SamsonComponent.prototype._destroyEvents = destroyEvents;
-SamsonComponent.prototype._loadSubComponents = loadSubComponents; // load the subcomponents of this component/page
-SamsonComponent.prototype._renderSubComponents = renderSubComponents; // render the subcomponents of this component/page
-SamsonComponent.prototype._destroySubComponents = destroySubComponents; // destroy the subcomponents of this component/page
-SamsonComponent.prototype._remove = remove; // removes all event listeners, DOM nodes, and subcomponents
+SamsonComponent.prototype.__doFirst = doFirst; // run the named function before calling back, and passthrough the first callback argument if one exists
+SamsonComponent.prototype.__loadEvents = loadEvents;
+SamsonComponent.prototype.__destroyEvents = destroyEvents;
+SamsonComponent.prototype.__loadSubComponents = loadSubComponents; // load the subcomponents of this component/page
+SamsonComponent.prototype.__renderSubComponents = renderSubComponents; // render the subcomponents of this component/page
+SamsonComponent.prototype.__destroySubComponents = destroySubComponents; // destroy the subcomponents of this component/page
+SamsonComponent.prototype.__remove = remove; // removes all event listeners, DOM nodes, and subcomponents

@@ -6,11 +6,11 @@ export default function remove(callback) {
 
   var self = this;
 
-  this._doFirst("beforeRemove", function() {
+  this.__doFirst('beforeRemove', function() {
 
-    self._destroySubComponents(function() {
+    self.__destroySubComponents(function() {
 
-      self._destroyEvents(function() {
+      self.__destroyEvents(function() {
 
         // destroy the DOM element
         if (self.element && self.element.parentNode) {
@@ -21,8 +21,8 @@ export default function remove(callback) {
         delete self.element;
 
         // remove any router related tasks
-        Object.keys(self._routerEvents).forEach(function(router_event) {
-          delete SamsonApp.Router[router_event][self._uuid];
+        Object.keys(self.__routerEvents).forEach(function(router_event) {
+          delete SamsonApp.Router[router_event][self.__uuid];
         });
 
         // remove the event delegator if it exists
@@ -30,9 +30,9 @@ export default function remove(callback) {
 
         // reset the page's state
         self.state = {};
-        self._initialStateSet = false;
+        self.__initialStateSet = false;
 
-        self._doFirst("afterRemove", function() {
+        self.__doFirst('afterRemove', function() {
           if (callback) callback();
         });
 

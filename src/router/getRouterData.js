@@ -7,8 +7,8 @@ export default function getRouterData() {
     previousPage : this.previousPage,
     nextPage : this.nextPage,
     isAnimating : this.isAnimating,
-    activePageElement : this.activePageElement,
-    inactivePageElement : this.inactivePageElement,
+    activePage : this.activePage,
+    inactivePage : this.inactivePage,
     currentAnimation : this.currentAnimation
   };
 

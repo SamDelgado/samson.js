@@ -13,13 +13,13 @@ export default function loadEvents(callback) {
 
     loadDOMEvents: function(loadDOMEvents_cb) {
 
-      if (!self._loadedDOMEvents.length) {
+      if (!self.__loadedDOMEvents.length) {
 
         var parent = getTopParent(self);
         var parent_element = parent.element;
         var parent_delegate = parent.delegate;
 
-        Async.each(self.DOMEvents, function(event, cb) {
+        Async.each(self.__DOMEvents, function(event, cb) {
 
           if (event.selector) {
             parent_delegate.on(event.type, event.selector, event.handler, event.onCapture);
@@ -27,7 +27,7 @@ export default function loadEvents(callback) {
             parent_element.addEventListener(event.type, event.handler, event.onCapture);
           }
 
-          self._loadedDOMEvents.push(event);
+          self.__loadedDOMEvents.push(event);
 
           cb();
 
@@ -43,13 +43,13 @@ export default function loadEvents(callback) {
 
     loadAppEvents: function(loadAppEvents_cb) {
 
-      if (!self._loadedAppEvents.length) {
+      if (!self.__loadedAppEvents.length) {
 
-        Async.each(self.AppEvents, function(event, cb) {
+        Async.each(self.__AppEvents, function(event, cb) {
 
           SamsonApp.on(event.type, event.handler, self);
 
-          self._loadedAppEvents.push(event);
+          self.__loadedAppEvents.push(event);
 
           cb();
 

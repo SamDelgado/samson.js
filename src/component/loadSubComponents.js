@@ -8,15 +8,15 @@ export default function loadSubComponents(force_update, callback) {
   var self = this;
 
   // If the components aren't loaded, or force_update is true, then load the components
-  if (!this._componentsLoaded || force_update) {
+  if (!this.__componentsLoaded || force_update) {
 
-    var components = Object.keys(this._components);
+    var components = Object.keys(this.__components);
 
     Async.each(components, function(component, cb) {
 
       // if the component hasn't been loaded yet, then load it
       if (!self.Components[component]) {
-        self.Components[component] = new SamsonComponent(self._components[component], false);
+        self.Components[component] = new SamsonComponent(self.__components[component], false);
         self.Components[component].parent = self;
       }
 
@@ -24,7 +24,7 @@ export default function loadSubComponents(force_update, callback) {
 
     }, function() {
 
-      self._componentsLoaded = true;
+      self.__componentsLoaded = true;
       if (callback) callback();
 
     });

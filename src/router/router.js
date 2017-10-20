@@ -18,28 +18,28 @@ export default function SamsonRouter(options) {
 
   var self = this;
 
-  this.activePageElement = "Page_1";
-  this.inactivePageElement = "Page_2";
+  this.activePage = "Page_1";
+  this.inactivePage = "Page_2";
 
   // our page cache will store the initialized pages
-  this.pageCache = {};
+  this.Cache = {};
 
   // if options.cache is true, then all pages will remain cached
-  this.cache = options.cache || false;
+  this.__cache = options.cache || false;
 
   // create the app router history
-  this.history = [];
+  this.History = [];
 
   // a queue of any router events that haven't been handled yet
-  this.queue = [];
+  this.Queue = [];
 
   // set the app's animations
-  this.animations = BASE_ROUTER_ANIMATIONS;
+  this.Animations = BASE_ROUTER_ANIMATIONS;
 
   var custom_router_animations = options.animations || {};
   var key;
   for (key in custom_router_animations) {
-    this.animations[key] = custom_router_animations[key];
+    this.Animations[key] = custom_router_animations[key];
   }
 
   this.currentPage = false; // the name of the page we are currently on
@@ -77,12 +77,12 @@ export default function SamsonRouter(options) {
 
 }
 
-SamsonRouter.prototype.getRouterData = getRouterData; // get the router's current page data
-SamsonRouter.prototype._doFirst = doFirst;
-SamsonRouter.prototype._doFirstNoCallback = doFirstNoCallback;
-SamsonRouter.prototype.updateHistory = updateHistory;
-SamsonRouter.prototype.getAnimationData = getAnimationData;
-SamsonRouter.prototype.doAnimation = doAnimation;
-SamsonRouter.prototype.animate = animate;
+SamsonRouter.prototype.__getRouterData = getRouterData; // get the router's current page data
+SamsonRouter.prototype.__doFirst = doFirst;
+SamsonRouter.prototype.__doFirstNoCallback = doFirstNoCallback;
+SamsonRouter.prototype.__updateHistory = updateHistory;
+SamsonRouter.prototype.__getAnimationData = getAnimationData;
+SamsonRouter.prototype.__doAnimation = doAnimation;
+SamsonRouter.prototype.__animate = animate;
 SamsonRouter.prototype.navigate = navigate;
 SamsonRouter.prototype.back = back;

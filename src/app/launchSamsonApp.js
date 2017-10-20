@@ -21,8 +21,8 @@ export default function launchSamsonApp(launchTasks) {
   
       SamsonApp.DEBUG && SamsonApp.log('Running all ' + event + 'Launch tasks');
       
-      // all of these tasks will run in parallel
-      Async.parallel(tasks, function() {
+      // all of these tasks will run in series (the order they are in)
+      Async.series(tasks, function() {
     
         SamsonApp.DEBUG && SamsonApp.log('All ' + event + 'Launch tasks have completed successfully');
     
@@ -38,7 +38,7 @@ export default function launchSamsonApp(launchTasks) {
 
     SamsonApp.DEBUG && SamsonApp.log('Loading all top-level components');
 
-    var unloadedComponents = SamsonApp._components;
+    var unloadedComponents = SamsonApp.__components;
     var Components = SamsonApp.Components;
 
     // Load all of the app's top-level Components
@@ -47,7 +47,7 @@ export default function launchSamsonApp(launchTasks) {
       Components[component] = new SamsonComponent(unloadedComponents[component], false);
       Components[component].parent = {element: SamsonApp.DOM.App, delegate: SamsonApp.delegate};
   
-      Components[component]._render(false, null, function() {
+      Components[component].__render(false, null, function() {
         cb();
       });
   
@@ -85,11 +85,10 @@ export default function launchSamsonApp(launchTasks) {
 
   // setup our before, during, and after launch tasks
   var beforeLaunchTasks = launchTasks.before || [];
-
-  var duringLaunchTasks = launchTasks.during || [];
-  duringLaunchTasks.push(configureModules, loadComponents);
-
   var afterLaunchTasks = launchTasks.after || [];
+
+  // these will run in series during the app's launch
+  var duringLaunchTasks = [loadComponents, configureModules];
 
   return function launch() {
 

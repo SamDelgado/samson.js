@@ -13,13 +13,13 @@ export default function destroyEvents(callback) {
 
     destroyDOMEvents: function(destroyDOMEvents_cb) {
 
-      if (self._loadedDOMEvents.length) {
+      if (self.__loadedDOMEvents.length) {
 
         var parent = getTopParent(self);
         var parent_element = parent.element;
         var parent_delegate = parent.delegate;
 
-        Async.each(self.DOMEvents, function(event, cb) {
+        Async.each(self.__DOMEvents, function(event, cb) {
 
           if (event.selector) {
             parent_delegate.off(event.type, event.selector, event.handler, event.onCapture);
@@ -30,7 +30,7 @@ export default function destroyEvents(callback) {
           cb();
 
         }, function() {
-          self._loadedDOMEvents = [];
+          self.__loadedDOMEvents = [];
           destroyDOMEvents_cb();
         });
 
@@ -42,16 +42,16 @@ export default function destroyEvents(callback) {
 
     destroyAppEvents: function(destroyAppEvents_cb) {
 
-      if (self._loadedAppEvents.length) {
+      if (self.__loadedAppEvents.length) {
 
-        Async.each(self.AppEvents, function(event, cb) {
+        Async.each(self.__AppEvents, function(event, cb) {
 
           SamsonApp.off(event.type, event.handler);
 
           cb();
 
         }, function() {
-          self._loadedAppEvents = [];
+          self.__loadedAppEvents = [];
           destroyAppEvents_cb();
         });
 

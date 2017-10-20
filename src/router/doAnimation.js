@@ -8,18 +8,18 @@ export default function doAnimation(animate, callback) {
 
   var self = this;
 
-  SamsonApp.DOM[this.inactivePageElement].classList.add(animate.next, 'active');
-  SamsonApp.DOM[this.activePageElement].classList.add(animate.current);
-  SamsonApp.DOM[this.activePageElement].classList.remove('active');
+  SamsonApp.DOM[this.inactivePage].classList.add(animate.next, 'active');
+  SamsonApp.DOM[this.activePage].classList.add(animate.current);
+  SamsonApp.DOM[this.activePage].classList.remove('active');
 
   // run any necessary tasks while the pages are animating. No callback is necessary - Ex: update header or footer
-  this._doFirstNoCallback('duringAnimate');
+  this.__doFirstNoCallback('duringAnimate');
 
   var animationEventName = whichEventName('animations');
 
   // if the animation is not "none", then listen for the animation's end event
   if (animate.next !== 'none') {
-    listenOnce(SamsonApp.DOM[this.inactivePageElement], animationEventName, animationEnded);
+    listenOnce(SamsonApp.DOM[this.inactivePage], animationEventName, animationEnded);
   }
 
   // otherwise run the animationEnded immediately
@@ -31,10 +31,10 @@ export default function doAnimation(animate, callback) {
   function animationEnded() {
 
     // remove the animation class from the page we just made active
-    SamsonApp.DOM[self.inactivePageElement].classList.remove(animate.next);
+    SamsonApp.DOM[self.inactivePage].classList.remove(animate.next);
 
     // remove the animation class from the page we just made inactive
-    SamsonApp.DOM[self.activePageElement].classList.remove(animate.current);
+    SamsonApp.DOM[self.activePage].classList.remove(animate.current);
 
     self.isAnimating = false;
 
@@ -42,9 +42,9 @@ export default function doAnimation(animate, callback) {
     // also remove the entire page instance from the router's pageCache if the cache option is false
     if (self.currentPage) {
 
-      self.pageCache[self.currentPage]._remove(function() {
+      self.Cache[self.currentPage].__remove(function() {
 
-        if (!self.cache) delete self.pageCache[self.currentPage];
+        if (!self.__cache) delete self.Cache[self.currentPage];
         callback();
 
       });

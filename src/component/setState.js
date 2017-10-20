@@ -24,13 +24,13 @@ export default function setState(new_state, dont_reload) { // new_state must be 
 
     if (changed) {
 
-      this._stateChanged = true;
+      this.__stateChanged = true;
 
       // the page or component and all of its subcomponents will reload by default unless the dont_reload argument is true
       // make the component had already rendered once (_loaded === true) before trying to rerender it
-      if (!dont_reload && self._loaded) {
+      if (!dont_reload && self.__loaded) {
 
-        this._render(false);
+        this.__render(false);
 
         /*
         if (!this.parent || !this.parent._type) {

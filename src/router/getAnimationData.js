@@ -6,10 +6,10 @@ export default function getAnimationData(animation) {
   data.next = "none";
 
   var key;
-  for (key in this.animations) {
+  for (key in this.Animations) {
     if (animation === key) {
-      data.current = this.animations[key].current;
-      data.next = this.animations[key].next;
+      data.current = this.Animations[key].current;
+      data.next = this.Animations[key].next;
       break;
     }
   }

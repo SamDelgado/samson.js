@@ -6,18 +6,18 @@ export default function destroySubComponents(callback) {
 
   var self = this;
 
-  var components = Object.keys(this._components);
+  var components = Object.keys(this.__components);
 
   Async.each(components, function(component, cb) {
 
-    self.Components[component]._remove(function() {
+    self.Components[component].__remove(function() {
       delete self.Components[component];
       cb();
     });
 
   }, function() {
 
-    self._componentsLoaded = false;
+    self.__componentsLoaded = false;
     callback();
 
   });

@@ -7,7 +7,7 @@ export default function doFirst(name, callback) {
   var tasks = Object.keys(this[name]);
 
   Async.each(tasks, function(task, cb) {
-    self[name][task](self.getRouterData(), function(err) {
+    self[name][task](self.__getRouterData(), function(err) {
       cb(err);
     });
   }, function(err) {

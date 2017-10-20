@@ -4,6 +4,6 @@
 export default function clearState() {
 
   this.state = {};
-  this._render(true);
+  this.__render(true);
 
 }

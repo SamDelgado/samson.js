@@ -8,15 +8,15 @@ export default function render(force_update, container_element, callback) {
 
   var self = this;
 
-  this._loadSubComponents(force_update, function() {
+  this.__loadSubComponents(force_update, function() {
 
     // get the component's initial state object that is passed into the render call
-    if (!self._initialStateSet) {
+    if (!self.__initialStateSet) {
       self.state = self.setInitialState();
-      self._initialStateSet = true;
+      self.__initialStateSet = true;
     }
 
-    self._doFirst("beforeRender", function() {
+    self.__doFirst("beforeRender", function() {
 
       // create the component element
       if (self.isPage) {
@@ -24,7 +24,7 @@ export default function render(force_update, container_element, callback) {
         if (!self.element) {
           self.element = document.createElement("div");
           self.element.id = self.path + "-page";
-          self.element.innerHTML = self._template(self._templateData);
+          self.element.innerHTML = self.__template(self.__templateData);
           container_element.appendChild(self.element);
 
           // setup the page as an event delegator for all its subcomponents
@@ -32,14 +32,14 @@ export default function render(force_update, container_element, callback) {
         }
 
         // set whether or not we will force subcomponents to update
-        if (force_update || self._stateChanged) {
+        if (force_update || self.__stateChanged) {
           force_update = true;
-          self.element.innerHTML = self._template(self._templateData);
+          self.element.innerHTML = self.__template(self.__templateData);
         }
 
       } else {
 
-        if (!self.element || (force_update || self._stateChanged) ) {
+        if (!self.element || (force_update || self.__stateChanged) ) {
           force_update = true;
           self.element = document.getElementById(self.el);
 
@@ -49,8 +49,8 @@ export default function render(force_update, container_element, callback) {
             self.element = document.createElement(self.tag);
             self.element.id = self.el;
 
-            if (self._template) {
-              self.element.innerHTML = self._template(self._templateData);
+            if (self.__template) {
+              self.element.innerHTML = self.__template(self.__templateData);
             }
 
             if (self.parent && self.parent.element) {
@@ -59,28 +59,28 @@ export default function render(force_update, container_element, callback) {
               SamsonApp.DEBUG && SamsonApp.log('There is no parent Samson Component to append ' + self.el + ' to.');
             }
 
-          } else if (self._template) {
-            self.element.innerHTML = self._template(self._templateData);
+          } else if (self.__template) {
+            self.element.innerHTML = self.__template(self.__templateData);
           }
 
         }
 
       }
 
-      self._loadEvents(function() {
+      self.__loadEvents(function() {
 
-        self._renderSubComponents(force_update, function() {
+        self.__renderSubComponents(force_update, function() {
 
           // reset stateChanged
-          self._stateChanged = false;
+          self.__stateChanged = false;
 
-          self._fixAutoFocusElements();
+          self.__fixAutoFocusElements();
 
-          self._doFirst("afterRender", function() {
+          self.__doFirst("afterRender", function() {
 
             // if this is the first time the component has been rendered, then run the onLoad function - page's have their onLoad function run
-            if (!self.isPage && !self._loaded) {
-              self._loaded = true;
+            if (!self.isPage && !self.__loaded) {
+              self.__loaded = true;
               self.onLoad();
             }
 
