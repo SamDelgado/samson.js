@@ -1,0 +1,68 @@
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body, #App {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #FFF;
+}
+
+body {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  word-wrap: break-word;
+
+  font-size: 10px;
+  font-style: normal;
+  color: #000000;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+
+  backface-visibility: hidden;
+  -webkit-user-drag: none;
+  -ms-content-zooming: none;
+
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#App {
+  z-index: 1;
+}
+
+#Pages {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.Page {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 1;
+  z-index: 1;
+  overflow: hidden;
+  backface-visibility: hidden;
+  transform: translate3d(0,0,0);
+}
+
+.Page.active {
+  z-index: 2
+}

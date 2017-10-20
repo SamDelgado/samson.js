@@ -54,7 +54,7 @@ function getItems() {
 
   while (i--) {
     var key = keys[i];
-    items[key] = find(key);
+    items[key] = get(key);
   }
 
   return items;
