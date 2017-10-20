@@ -186,7 +186,7 @@ export default function SamsonComponent(options, add_events) {
   this.afterRemove = options.afterRemove || justCallback;
 
   // add any router related tasks
-  this.__uuid = this._name + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
+  this.__uuid = this.__name + "-" + Date.now(); // the uuid allows us to easily reference the added router tasks
   this.__routerEvents = options.Router || options.router || {};
 
   loadRouterEvents(this);
