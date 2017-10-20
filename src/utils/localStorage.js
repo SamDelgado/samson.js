@@ -1,7 +1,7 @@
 // Client localStorage DB to keep data persisted
 
 // save an item to localStorage
-function save(key, value, dont_stringify) {
+function set(key, value, dont_stringify) {
 
   value = (value !== undefined && value !== null && value !== false) ? value : "";
 
@@ -14,7 +14,7 @@ function save(key, value, dont_stringify) {
 }
 
 // retrieve a single item from localStorage
-function find(key, dont_parse) {
+function get(key, dont_parse) {
 
   var found_item;
 
@@ -35,7 +35,7 @@ function remove(key) {
 }
 
 // destroy the whole localStorage
-function removeAll() {
+function clear() {
   localStorage.clear();
   return true;
 }
@@ -48,29 +48,33 @@ function getKeys() {
 // retrieve all items in localStorage
 function getItems() {
 
-  getKeys().reduce(function(items, key) { 
+  var items = {};
+  var keys = Object.keys(localStorage);
+  var i = keys.length;
 
-    items[key] = find(key); 
-    return items;
-    
-  }, {});
+  while (i--) {
+    var key = keys[i];
+    items[key] = find(key);
+  }
+
+  return items;
 
 }
 
-export const LocalStorage = {
+export const Storage = {
 
-  save: save,
-  set: save,
+  save: set,
+  set: set,
 
-  find: find,
-  get: find,
+  find: get,
+  get: get,
 
   remove: remove,
   delete: remove,
 
-  removeAll: removeAll,
-  deleteAll: removeAll,
-  clear: removeAll,
+  removeAll: clear,
+  deleteAll: clear,
+  clear: clear,
 
 
   keys: getKeys,
