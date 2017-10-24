@@ -26,7 +26,7 @@ function makeModuleTree (ctx) {
   const ModuleTree = {};
 
   ctx.keys().forEach(function (key) {
-    let module = ctx(key);
+    var module = ctx(key);
 
     // Babel hack, required to get ES5 and ES6 to place nice together
     // by extracting the module from .default per Babel 6 behavior
@@ -69,7 +69,7 @@ function addModuleToTree (module, pathSegments, i, tree, previousTree) {
       tree[module_name] = module;
     }
 
-    return;
+    
   } else {
     if (!tree[module_name]) tree[module_name] = {};
     i++;
@@ -77,8 +77,7 @@ function addModuleToTree (module, pathSegments, i, tree, previousTree) {
   }
 }
 
-function addComponentToTree(module, pathSegments, i, tree, previousTree) {
-
+function addComponentToTree (module, pathSegments, i, tree, previousTree) {
   var current_path_segment = pathSegments[i];
 
   // split the file name and extension
@@ -87,39 +86,25 @@ function addComponentToTree(module, pathSegments, i, tree, previousTree) {
   var module_ext = segment_split[1];
 
   if (i === pathSegments.length - 1) {
-
-    var parent_name = pathSegments[i-1];
+    var parent_name = pathSegments[i - 1];
 
     if (module_name.toUpperCase() === parent_name.toUpperCase() && module_ext === 'js') {
-
       if (typeof module === 'object') tree = Object.assign(tree, module);
       else previousTree[parent_name] = module;
-
     } else if (module_name.toUpperCase() === parent_name.toUpperCase() && module_ext === 'pug') {
-
       tree.template = module;
-
     } else {
-
       tree[module_name] = module;
-      
     }
-
-    
 
   // if we are on the first part of the path, and the current_path contains the word 'pages',
   // then we are skipping it since it is just a grouped page folder like 'profile-pages' or 'misc-pages'
   } else if (i === 1 && current_path_segment.includes('pages')) {
-    
-      i++;
-      addComponentToTree(module, pathSegments, i, tree);
-    
+    i++;
+    addComponentToTree(module, pathSegments, i, tree);
   } else {
-
     if (!tree[module_name]) tree[module_name] = {};
     i++;
     addComponentToTree(module, pathSegments, i, tree[current_path_segment], tree);
-
   }
-
 }
