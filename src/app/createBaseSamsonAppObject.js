@@ -20,8 +20,7 @@ import launchSamsonApp from './launchSamsonApp.js';
 import { RESERVED_PROPS } from './reserved_app_properties.js';
 
 // Creates the Samson App object
-export default function createBaseSamsonAppObject(SamsonAppBundle) {
-  
+export default function createBaseSamsonAppObject (SamsonAppBundle) {
   SamsonApp.Name = SamsonAppBundle.Name || 'App';
   SamsonApp.DEBUG = SamsonAppBundle.DEBUG || (window && window.DEBUG);
 
@@ -54,8 +53,11 @@ export default function createBaseSamsonAppObject(SamsonAppBundle) {
   SamsonApp.__components = SamsonAppBundle.Components || {};
   SamsonApp.Components = {};
 
+  // extract the Setup object from the SamsonAppBundle
+  const Setup = SamsonAppBundle.Setup || {};
+
   // setup the app's router after loading any extra components
-  SamsonApp.Router = new SamsonRouter(SamsonAppBundle.Router || {});
+  SamsonApp.Router = new SamsonRouter(Setup.router || {});
 
   // attach any unreserved properties from the SamsonAppBundle object to the App object
   extendObject(SamsonApp, SamsonAppBundle, RESERVED_PROPS);
@@ -64,11 +66,9 @@ export default function createBaseSamsonAppObject(SamsonAppBundle) {
   SamsonApp.delegate = Gator(SamsonApp.DOM.App);
 
   // attach the Setup loadState and launch methods to the app object
-  const Setup = SamsonAppBundle.Setup || {};
   const launchTasks = Setup.launchTasks || {};
 
   SamsonApp.loadState = Setup.loadState || justCallback;
 
   SamsonApp.launch = launchSamsonApp(launchTasks);
-
 }
